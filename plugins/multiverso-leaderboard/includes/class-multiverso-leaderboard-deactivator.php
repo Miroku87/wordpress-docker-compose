@@ -40,14 +40,14 @@ class Multiverso_Leaderboard_Deactivator
 	}
 
 	/**
-	 * Drops the redeemable codes table.
+	 * Drops the leaderboard table.
 	 *
 	 * @since    1.0.0
 	 */
 	private static function drop_multiverso_leaderboard_table()
 	{
 		global $wpdb;
-		$table_name = $wpdb->prefix . MULTIVERSO_LB_CODES_TABLE_NAME;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
 		$wpdb->query("DROP TABLE IF EXISTS $table_name");
 		delete_transient('multiverso_leaderboard_rate_limit_' . $_SERVER['REMOTE_ADDR']);

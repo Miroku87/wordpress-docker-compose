@@ -25,7 +25,3 @@ release-multiverso-leaderboard:
 		${MULTIVERSO_FTP_PASSWORD} \
 		/public_html/wp-content/plugins/multiverso-leaderboard \
 		plugins/multiverso-leaderboard
-
-# .PHONY: release-multiverso-leaderboard
-# release-multiverso-leaderboard:
-# 	curl -T 'plugins/multiverso-leaderboard' 'ftp://ipfzhzcr:${MULTIVERSO_FTP_PASSWORD}@ftp.viaggionelmultiverso.it/public_html/wp-content/plugins/'

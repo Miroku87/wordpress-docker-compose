@@ -14,17 +14,17 @@
 ?>
 
 <div class="wrap">
-    <h1><?php esc_html_e('Manage CORS Origins', $this->plugin_name); ?></h1>
+    <h1><?php esc_html_e('Gestisci Origini CORS', $this->plugin_name); ?></h1>
 
     <!-- add a short and simple explanation on what are CORS origins -->
     <p>
-        <?php esc_html_e('CORS origins are the domains that are allowed to access the API to redeem codes.', $this->plugin_name); ?><br>
-        <?php esc_html_e('E.g. the websites where the SpeedTale Widget will reside in.', $this->plugin_name); ?>
+        <?php esc_html_e('Le origini CORS sono domini dal quale è consentito accedere alle API per inserire punteggi.', $this->plugin_name); ?><br>
+        <?php esc_html_e('Esempio: i siti web dove verrà ospitato il Widget delle SpeedTale.', $this->plugin_name); ?>
     </p>
 
     <!-- CORS origins form -->
-    <?php require plugin_dir_path(__FILE__) . 'multiverso-leaderboard-admin-cors-form.php'; ?>
+    <?php require plugin_dir_path(__FILE__) . 'multiverso-leaderboard-admin-form.php'; ?>
 
     <!-- CORS origins list -->
-    <?php require plugin_dir_path(__FILE__) . 'multiverso-leaderboard-admin-cors-list.php'; ?>
+    <?php require plugin_dir_path(__FILE__) . 'multiverso-leaderboard-admin-list.php'; ?>
 </div>

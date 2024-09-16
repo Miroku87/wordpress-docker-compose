@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -73,7 +72,7 @@ class Multiverso_Leaderboard_Admin
 
 		if (count($cors_origins) > 0) {
 			foreach ($cors_origins as $cors_origin) {
-				$this->origins[] = $cors_origin->origin;
+				$this->origins[] = $cors_origin;
 			}
 		}
 	}
@@ -109,6 +108,7 @@ class Multiverso_Leaderboard_Admin
 	{
 		$this->handle_origin_form_submission();
 		$this->handle_origin_delete_request();
+		$this->handle_lb_entry_delete_request();
 	}
 
 	/**
@@ -184,7 +184,7 @@ class Multiverso_Leaderboard_Admin
 	{
 		global $wpdb;
 		$entry = $data['entry'];
-		$table_name = $wpdb->prefix . MULTIVERSO_LB_CODES_TABLE_NAME;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
 		$rate_limit = $this->check_rate_limit();
 		if (is_wp_error($rate_limit)) {
@@ -196,7 +196,6 @@ class Multiverso_Leaderboard_Admin
 		$resp = $wpdb->insert(
 			$table_name,
 			array(
-				'id' => $data['id'],
 				'school_name' => $data['school_name'],
 				'class_name' => $data['class_name'],
 				'group_name' => $data['group_name'],
@@ -205,16 +204,18 @@ class Multiverso_Leaderboard_Admin
 				'total_score' => $data['total_score'],
 				'elapsed_time_seconds' => $data['elapsed_time_seconds'],
 			),
-			array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d'),
+			array('%s', '%s', '%s', '%s', '%s', '%d', '%d'),
 		);
 
 		if (!$resp) {
 			return new WP_Error('add_leaderboard_entry_error', $wpdb->last_error);
 		}
 
+		$insert_id = $wpdb->insert_id;
+
 		$this->increment_rate_limit();
 
-		return new WP_REST_Response(intval($wpdb->insert_id);, 200);
+		return new WP_REST_Response(array("id"=>$insert_id), 200);
 	}
 
 	/**
@@ -225,19 +226,19 @@ class Multiverso_Leaderboard_Admin
 	private function add_admin_menu()
 	{
 		add_menu_page(
-			__('Visualizza Classifica', $this->plugin_name), // Page title
-			__('Visualizza Classifica', $this->plugin_name), // Menu title
+			__('Classifiche Multiverso', $this->plugin_name), // Page title
+			__('Classifiche Multiverso', $this->plugin_name), // Menu title
 			'manage_options', // Capability
 			$this->plugin_name, // Menu slug
 			array($this, 'admin_page'), // Callback function
-			'dashicons-tickets-alt', // Icon
+			'dashicons-editor-table', // Icon
 			25 // Position
 		);
 
 		add_submenu_page(
 			$this->plugin_name, // Parent slug
-			__('Manage CORS Origins', $this->plugin_name), // Page title
-			__('Manage CORS Origins', $this->plugin_name), // Menu title
+			__('Gestisci Origini CORS', $this->plugin_name), // Page title
+			__('Gestisci Origini CORS', $this->plugin_name), // Menu title
 			'manage_options', // Capability
 			$this->plugin_name . '-cors', // Menu slug
 			array($this, 'cors_origin_page') // Callback function
@@ -255,10 +256,10 @@ class Multiverso_Leaderboard_Admin
 			return;
 
 		if (!check_admin_referer('multiverso_leaderboard_generate_action', 'multiverso_leaderboard_nonce_field'))
-			wp_die(__('You cannot access this page.', $this->plugin_name));
+			wp_die(__('Non puoi accedere a questa sezione.', $this->plugin_name));
 
 		if (!current_user_can('manage_options'))
-			wp_die(__('You do not have sufficient permissions to access this page.', $this->plugin_name));
+			wp_die(__('Non sufficienti permessi per accedere a questa sezione.', $this->plugin_name));
 
 		$origin = $_POST['origin'];
 
@@ -275,14 +276,14 @@ class Multiverso_Leaderboard_Admin
 			$message = $insert_ok->get_error_message();
 
 			if (strpos($message, 'Duplicate entry') !== false) {
-				$message = sprintf(__('Origin %s already exists.', $this->plugin_name), $origin);
+				$message = sprintf(__('L\'origine %s è già registrata.', $this->plugin_name), $origin);
 			}
 
 			add_settings_error('multiverso-leaderboard-cors-notices', 'multiverso-leaderboard-cors-notices', $message, 'error');
 			return;
 		}
 
-		$message = sprintf(__('Origin %s added.', $this->plugin_name), $origin);
+		$message = sprintf(__('Origine %s aggiunta.', $this->plugin_name), $origin);
 		add_settings_error('multiverso-leaderboard-cors-notices', 'multiverso-leaderboard-cors-notices', $message, 'updated');
 	}
 
@@ -293,22 +294,25 @@ class Multiverso_Leaderboard_Admin
 	 */
 	private function handle_origin_delete_request()
 	{
-		if (!isset($_POST['action']) || !isset($_POST['origin_id']))
+		if (!isset($_POST['action']) || !isset($_POST['namespace']) || !isset($_POST['origin_id']))
+			return;
+
+		if ($_POST['namespace'] != 'cors')
 			return;
 
 		if ($_POST['action'] != 'delete')
 			return;
 
 		if (!check_admin_referer('multiverso_leaderboard_generate_action', 'multiverso_leaderboard_nonce_field'))
-			wp_die(__('You cannot access this page.', $this->plugin_name));
+			wp_die(__('Non puoi accedere a questa sezione.', $this->plugin_name));
 
 		if (!current_user_can('manage_options'))
-			wp_die(__('You do not have sufficient permissions to access this page.', $this->plugin_name));
+			wp_die(__('Non sufficienti permessi per accedere a questa sezione.', $this->plugin_name));
 
 		$origin_id = intval($_POST['origin_id']);
 
 		if ($origin_id <= 0) {
-			add_settings_error('multiverso-leaderboard-cors-notices', 'multiverso-leaderboard-cors-notices', __('Invalid origin ID.', $this->plugin_name), 'error');
+			add_settings_error('multiverso-leaderboard-cors-notices', 'multiverso-leaderboard-cors-notices', __('ID origine invalido.', $this->plugin_name), 'error');
 		}
 
 		$ok = $this->delete_allowed_origin($origin_id);
@@ -318,7 +322,45 @@ class Multiverso_Leaderboard_Admin
 			return;
 		}
 
-		add_settings_error('multiverso-leaderboard-cors-notices', 'multiverso-leaderboard-cors-notices', __('Origin deleted.', $this->plugin_name), 'updated');
+		add_settings_error('multiverso-leaderboard-cors-notices', 'multiverso-leaderboard-cors-notices', __('Origine rimossa.', $this->plugin_name), 'updated');
+	}
+
+	/**
+	 * Handle a leaderboard entry delete request.
+	 *
+	 * @since    1.0.0
+	 */
+	private function handle_lb_entry_delete_request()
+	{
+		if (!isset($_POST['action']) || !isset($_POST['namespace']) || !isset($_POST['entry_id']))
+			return;
+
+		if ($_POST['namespace'] != 'leaderboard')
+			return;
+
+		if ($_POST['action'] != 'delete')
+			return;
+
+		if (!check_admin_referer('multiverso_leaderboard_generate_action', 'multiverso_leaderboard_nonce_field'))
+			wp_die(__('Non puoi accedere a questa sezione.', $this->plugin_name));
+
+		if (!current_user_can('manage_options'))
+			wp_die(__('Non sufficienti permessi per accedere a questa sezione.', $this->plugin_name));
+
+		$entry_id = intval($_POST['entry_id']);
+
+		if ($entry_id <= 0) {
+			add_settings_error('multiverso-leaderboard-notices', 'multiverso-leaderboard-notices', __('ID voce invalido.', $this->plugin_name), 'error');
+		}
+
+		$ok = $this->delete_lb_entry($entry_id);
+
+		if (is_wp_error($ok)) {
+			add_settings_error('multiverso-leaderboard-notices', 'multiverso-leaderboard-notices', $ok->get_error_message(), 'error');
+			return;
+		}
+
+		add_settings_error('multiverso-leaderboard-notices', 'multiverso-leaderboard-notices', __('Origine rimossa.', $this->plugin_name), 'updated');
 	}
 
 	/**
@@ -328,8 +370,15 @@ class Multiverso_Leaderboard_Admin
 	 */
 	private function add_rest_api_hooks()
 	{
+		register_rest_route('multiverso-leaderboard/v1', '/health', array(
+			'methods' => 'GET',
+			'callback' => function () {
+				return new WP_REST_Response(array('status' => 'ok'), 200);
+			}
+		));
+
 		register_rest_route('multiverso-leaderboard/v1', '/entry', array(
-			'methods' => 'PATCH',
+			'methods' => 'POST',
 			'callback' => array($this, 'add_leaderboard_entry'),
 		));
 
@@ -364,7 +413,7 @@ class Multiverso_Leaderboard_Admin
 
 		// Check if the current IP has hit the rate limit.
 		if ($rate_limit >= MULTIVERSO_LB_RATE_LIMIT_REQUESTS) {
-			return new WP_Error('rate_limit_exceeded', 'Too many requests', array('status' => 429));
+			return new WP_Error('rate_limit_exceeded', 'Troppe chiamate API', array('status' => 429));
 		}
 
 		return true;
@@ -459,6 +508,28 @@ class Multiverso_Leaderboard_Admin
 
 		if (!$resp) {
 			return new WP_Error('delete_allowed_origin_error', $wpdb->last_error);
+		}
+
+		return True;
+	}
+
+	/**
+	 * Deletes a leaderboard entry from the database.
+	 *
+	 * @since    1.0.0
+	 */
+	private function delete_lb_entry($entry_id)
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
+		$resp = $wpdb->delete(
+			$table_name,
+			array('id' => $entry_id),
+			array('%d'),
+		);
+
+		if (!$resp) {
+			return new WP_Error('delete_lb_entry_error', $wpdb->last_error);
 		}
 
 		return True;

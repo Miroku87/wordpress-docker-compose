@@ -41,14 +41,14 @@ class Multiverso_Leaderboard_Activator
 	}
 
 	/**
-	 * Creates the redeemable codes table.
+	 * Creates the leaderboard table.
 	 *
 	 * @since    1.0.0
 	 */
 	private static function generate_leaderboard_table()
 	{
 		global $wpdb;
-		$table_name = $wpdb->prefix . MULTIVERSO_LB_CODES_TABLE_NAME;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
 		$charset_collate = $wpdb->get_charset_collate();
 
