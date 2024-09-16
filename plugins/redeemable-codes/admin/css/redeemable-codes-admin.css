@@ -1,0 +1,45 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+.form-table {
+    max-width: 50dvw;
+}
+
+.form-table th {
+    line-height: 2;
+}
+
+.form-table th,
+.form-table td {
+    padding: 10px 10px;
+    margin: 0;
+    vertical-align: top;
+}
+
+button .dashicons {
+    font-size: 16px;
+    line-height: 21px;
+}
+
+td.actions button {
+    margin: 0;
+    padding: 1px;
+}
+
+table.code-type-custom .code-type.random {
+    display: none;
+}
+
+table.code-type-custom .code-type.custom {
+    display: table-row;
+}
+
+table.code-type-random .code-type.random {
+    display: table-row;
+}
+
+table.code-type-random .code-type.custom {
+    display: none;
+}
