@@ -9,8 +9,8 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  */
 
 /**
@@ -20,11 +20,11 @@
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  * @author     Andrea Silvestri <andrea.silvestri87@yahoo.it>
  */
-class Redeemable_Codes_i18n
+class Multiverso_Leaderboard_i18n
 {
 	/**
 	 * The ID of this plugin.

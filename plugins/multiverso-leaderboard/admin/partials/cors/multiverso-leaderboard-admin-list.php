@@ -8,8 +8,8 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/admin/partials
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/admin/partials/cors
  */
 
 
@@ -19,7 +19,7 @@
 require_once plugin_dir_path(__FILE__) . '../../includes/multiverso-leaderboard-constants.php';
 
 global $wpdb;
-$table_name = $wpdb->prefix . REDEEMABLE_CODE_ORIGINS_TABLE_NAME;
+$table_name = $wpdb->prefix . MULTIVERSO_LB_ORIGINS_TABLE_NAME;
 $cors_origins = $wpdb->get_results("SELECT * FROM $table_name ORDER BY id DESC");
 ?>
 <!-- CORS Origin list -->
@@ -49,7 +49,7 @@ $cors_origins = $wpdb->get_results("SELECT * FROM $table_name ORDER BY id DESC")
                     <td><?php echo $origin->created_at; ?></td>
                     <td class="actions">
                         <form method="post" action="">
-                            <?php wp_nonce_field('redeemable_codes_generate_action', 'redeemable_codes_nonce_field'); ?>
+                            <?php wp_nonce_field('multiverso_leaderboard_generate_action', 'multiverso_leaderboard_nonce_field'); ?>
                             <input type="hidden" name="origin_id" value="<?php echo $origin->id; ?>">
                             <input type="hidden" name="action" value="delete">
                             <button type="submit" class="button-small"><span class="dashicons dashicons-trash"></span></button>

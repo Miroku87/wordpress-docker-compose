@@ -6,8 +6,8 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  */
 
 /**
@@ -21,11 +21,11 @@ require_once plugin_dir_path(__FILE__) . 'multiverso-leaderboard-constants.php';
  * This class defines all code necessary to run during the plugin's deactivation.
  *
  * @since      1.0.0
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  * @author     Andrea Silvestri <andrea.silvestri87@yahoo.it>
  */
-class Redeemable_Codes_Deactivator
+class Multiverso_Leaderboard_Deactivator
 {
 
 	/**
@@ -35,8 +35,8 @@ class Redeemable_Codes_Deactivator
 	 */
 	public static function deactivate()
 	{
-		Redeemable_Codes_Deactivator::drop_redeemable_codes_table();
-		Redeemable_Codes_Deactivator::drop_allowed_origins_table();
+		Multiverso_Leaderboard_Deactivator::drop_multiverso_leaderboard_table();
+		Multiverso_Leaderboard_Deactivator::drop_allowed_origins_table();
 	}
 
 	/**
@@ -44,13 +44,13 @@ class Redeemable_Codes_Deactivator
 	 *
 	 * @since    1.0.0
 	 */
-	private static function drop_redeemable_codes_table()
+	private static function drop_multiverso_leaderboard_table()
 	{
 		global $wpdb;
-		$table_name = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_CODES_TABLE_NAME;
 
 		$wpdb->query("DROP TABLE IF EXISTS $table_name");
-		delete_transient('redeemable_code_rate_limit_' . $_SERVER['REMOTE_ADDR']);
+		delete_transient('multiverso_leaderboard_rate_limit_' . $_SERVER['REMOTE_ADDR']);
 	}
 
 	/**
@@ -61,9 +61,9 @@ class Redeemable_Codes_Deactivator
 	private static function drop_allowed_origins_table()
 	{
 		global $wpdb;
-		$table_name = $wpdb->prefix . REDEEMABLE_CODE_ORIGINS_TABLE_NAME;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_ORIGINS_TABLE_NAME;
 
 		$wpdb->query("DROP TABLE IF EXISTS $table_name");
-		delete_transient('redeemable_code_rate_limit_' . $_SERVER['REMOTE_ADDR']);
+		delete_transient('multiverso_leaderboard_rate_limit_' . $_SERVER['REMOTE_ADDR']);
 	}
 }

@@ -8,8 +8,8 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/admin/partials
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/admin/partials/cors
  */
 ?>
 

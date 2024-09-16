@@ -22,7 +22,7 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
+ * @package    Multiverso_Leaderboard
  */
 
 // If uninstall not called from WordPress, then exit.

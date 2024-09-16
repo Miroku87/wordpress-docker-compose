@@ -8,8 +8,8 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/admin/partials
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/admin/partials/cors
  */
 
 
@@ -23,7 +23,7 @@ require_once plugin_dir_path(__FILE__) . '../../includes/multiverso-leaderboard-
 
 <!-- Form to add new origins -->
 <form method="post" action="">
-    <?php wp_nonce_field('redeemable_codes_generate_action', 'redeemable_codes_nonce_field'); ?>
+    <?php wp_nonce_field('multiverso_leaderboard_generate_action', 'multiverso_leaderboard_nonce_field'); ?>
     <h2><?php esc_html_e('Add Origin', $this->plugin_name); ?></h2>
     <table class="form-table">
         <tr>
@@ -32,7 +32,7 @@ require_once plugin_dir_path(__FILE__) . '../../includes/multiverso-leaderboard-
         </tr>
         <tr>
             <th scope="row"><label for="expiration_days"><?php esc_html_e('Expiration Date (Days)', $this->plugin_name); ?></label></th>
-            <td><input name="expiration_days" type="number" id="expiration_days" value="<?php echo REDEEMABLE_CODE_EXPIRATION_DAYS; ?>" class="small-text" autocomplete="off"></td>
+            <td><input name="expiration_days" type="number" id="expiration_days" value="<?php echo MULTIVERSO_LB_EXPIRATION_DAYS; ?>" class="small-text" autocomplete="off"></td>
             <td>
                 <?php esc_html_e('The expiration date is relative to the current date.', $this->plugin_name); ?></br>
                 <?php esc_html_e('Set to 0 for no expiration.', $this->plugin_name); ?>

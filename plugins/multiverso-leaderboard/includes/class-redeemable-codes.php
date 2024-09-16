@@ -9,8 +9,8 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  */
 
 
@@ -29,11 +29,11 @@ require_once plugin_dir_path(__FILE__) . 'multiverso-leaderboard-constants.php';
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  * @author     Andrea Silvestri <andrea.silvestri87@yahoo.it>
  */
-class Redeemable_Codes
+class Multiverso_Leaderboard
 {
 
 	/**
@@ -42,7 +42,7 @@ class Redeemable_Codes
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Redeemable_Codes_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Multiverso_Leaderboard_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -75,8 +75,8 @@ class Redeemable_Codes
 	 */
 	public function __construct()
 	{
-		if (defined('REDEEMABLE_CODES_VERSION')) {
-			$this->version = REDEEMABLE_CODES_VERSION;
+		if (defined('MULTIVERSO_LBS_VERSION')) {
+			$this->version = MULTIVERSO_LBS_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
@@ -94,10 +94,10 @@ class Redeemable_Codes
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Redeemable_Codes_Loader. Orchestrates the hooks of the plugin.
-	 * - Redeemable_Codes_i18n. Defines internationalization functionality.
-	 * - Redeemable_Codes_Admin. Defines all hooks for the admin area.
-	 * - Redeemable_Codes_Public. Defines all hooks for the public side of the site.
+	 * - Multiverso_Leaderboard_Loader. Orchestrates the hooks of the plugin.
+	 * - Multiverso_Leaderboard_i18n. Defines internationalization functionality.
+	 * - Multiverso_Leaderboard_Admin. Defines all hooks for the admin area.
+	 * - Multiverso_Leaderboard_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -131,13 +131,13 @@ class Redeemable_Codes
 		 */
 		require_once plugin_dir_path(__FILE__) . '../public/class-multiverso-leaderboard-public.php';
 
-		$this->loader = new Redeemable_Codes_Loader();
+		$this->loader = new Multiverso_Leaderboard_Loader();
 	}
 
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Redeemable_Codes_i18n class in order to set the domain and to register the hook
+	 * Uses the Multiverso_Leaderboard_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -146,7 +146,7 @@ class Redeemable_Codes
 	private function set_locale()
 	{
 
-		$plugin_i18n = new Redeemable_Codes_i18n($this->plugin_name);
+		$plugin_i18n = new Multiverso_Leaderboard_i18n($this->plugin_name);
 
 		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
 	}
@@ -161,7 +161,7 @@ class Redeemable_Codes
 	private function define_admin_hooks()
 	{
 
-		$plugin_admin = new Redeemable_Codes_Admin($this->get_plugin_name(), $this->get_version());
+		$plugin_admin = new Multiverso_Leaderboard_Admin($this->get_plugin_name(), $this->get_version());
 
 		$this->loader->add_action('rest_api_init', $plugin_admin, 'rest_api_init');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
@@ -182,7 +182,7 @@ class Redeemable_Codes
 	private function define_public_hooks()
 	{
 
-		$plugin_public = new Redeemable_Codes_Public($this->get_plugin_name(), $this->get_version());
+		$plugin_public = new Multiverso_Leaderboard_Public($this->get_plugin_name(), $this->get_version());
 
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
@@ -214,7 +214,7 @@ class Redeemable_Codes
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    Redeemable_Codes_Loader    Orchestrates the hooks of the plugin.
+	 * @return    Multiverso_Leaderboard_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader()
 	{
