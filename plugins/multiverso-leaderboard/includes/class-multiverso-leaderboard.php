@@ -75,8 +75,8 @@ class Multiverso_Leaderboard
 	 */
 	public function __construct()
 	{
-		if (defined('MULTIVERSO_LBS_VERSION')) {
-			$this->version = MULTIVERSO_LBS_VERSION;
+		if (defined('MULTIVERSO_LB_VERSION')) {
+			$this->version = MULTIVERSO_LB_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
