@@ -6,7 +6,7 @@ services:
     ports:
       - ${IP}:${PORT}:80 # change ip if required
     volumes:
-      - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+      - ./config/wp_php.ini:/usr/local/etc/php/conf.d/conf.ini
       - ./wp-app:/var/www/html # Full wordpress project
       - ./plugins/redeemable-codes/:/var/www/html/wp-content/plugins/redeemable-codes # Plugin development
       #- ./plugins/stwidget/:/var/www/html/wp-content/plugins/stwidget # Plugin development
@@ -24,7 +24,7 @@ services:
   wpcli:
     image: wordpress:cli
     volumes:
-      - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+      - ./config/wp_php.ini:/usr/local/etc/php/conf.d/conf.ini
       - ./wp-app:/var/www/html
     environment:
       WORDPRESS_DB_HOST: db
@@ -36,7 +36,7 @@ services:
       - wp
 
   pma:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin:latest  # https://hub.docker.com/_/phpmyadmin
     environment:
       # https://docs.phpmyadmin.net/en/latest/setup.html#docker-environment-variables
       PMA_HOST: db
@@ -47,9 +47,13 @@ services:
       - ${IP}:8080:80
     links:
       - db:db
+    volumes:
+     - ./config/pma_php.ini:/usr/local/etc/php/conf.d/conf.ini
+     - ./config/pma_config.php:/etc/phpmyadmin/config.user.inc.php
 
   db:
     image: mysql:latest # https://hub.docker.com/_/mysql/ - or mariadb https://hub.docker.com/_/mariadb
+    # platform: linux/x86_64  # Uncomment if your machine is running on arm (ex: Apple Silicon processor)
     ports:
       - ${IP}:3306:3306 # change ip if required
     command:
