@@ -205,7 +205,7 @@ class Multiverso_Leaderboard
 	{
 		$plugin_widgets = new Multiverso_Leaderboard_Widgets($this->get_plugin_name(), $this->get_version());
 
-		$this->loader->add_action('widgets_init', $plugin_widgets, 'enqueue_styles');
+		$this->loader->add_action('widgets_init', $plugin_widgets, 'register_widgets');
 	}
 
 	/**

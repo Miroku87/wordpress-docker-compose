@@ -21,7 +21,7 @@ require_once plugin_dir_path(__FILE__) . '../../../includes/multiverso-leaderboa
 global $wpdb;
 $table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
-$timeframe = ! empty( $instance['timeframe'] ) ? $instance['timeframe'] : 'total';
+$timeframe = ! empty( $instance['timeframe'] ) ? $instance['timeframe'] : 'complete';
 
 if ( $timeframe === 'today' ) {
     $leaderboard = $wpdb->get_results( "SELECT * FROM $table_name WHERE DATE(created_at) = CURDATE() ORDER BY total_score DESC, elapsed_time_seconds DESC" );

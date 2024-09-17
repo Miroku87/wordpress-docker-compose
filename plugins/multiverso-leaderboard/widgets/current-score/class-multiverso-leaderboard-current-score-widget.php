@@ -1,8 +1,8 @@
 <?php
 /**
- * Adds Multiverso_Leaderboard_Widget widget.
+ * Adds Multiverso_Leaderboard_Current_Score_Widget widget.
  */
-class Multiverso_Leaderboard_Widget extends WP_Widget {
+class Multiverso_Leaderboard_Current_Score_Widget extends WP_Widget {
 
 	/**
 	 * The ID of this plugin.
@@ -27,9 +27,9 @@ class Multiverso_Leaderboard_Widget extends WP_Widget {
      */
     function __construct($plugin_name, $version) {
         parent::__construct(
-            'multiverso_leaderboard_widget', // Base ID
-            esc_html__( 'Classifica', $plugin_name ), // Name
-            array( 'description' => esc_html__( 'Un widget per mostrare la classifica', $plugin_name ), ) // Args
+            'multiverso_leaderboard_current_score_widget', // Base ID
+            esc_html__( 'Punteggio Ottenuto', $plugin_name ), // Name
+            array( 'description' => esc_html__( 'Un widget per mostrare il punteggio appena ottenuto', $plugin_name ), ) // Args
         );
 
 		$this->plugin_name = $plugin_name;
@@ -45,7 +45,7 @@ class Multiverso_Leaderboard_Widget extends WP_Widget {
      * @param array $instance Saved values from database.
      */
     public function widget( $widget_args, $widget_instance ) {
-        require plugin_dir_path(__FILE__) . 'partials/multiverso-leaderboard-widget-list.php';
+        require plugin_dir_path(__FILE__) . 'partials/multiverso-leaderboard-current-score-widget-display.php';
     }
 
     /**
@@ -56,7 +56,7 @@ class Multiverso_Leaderboard_Widget extends WP_Widget {
      * @param array $instance Previously saved values from database.
      */
     public function form( $widget_instance ) {        
-        require plugin_dir_path(__FILE__) . 'partials/multiverso-leaderboard-widget-form.php';
+        require plugin_dir_path(__FILE__) . 'partials/multiverso-leaderboard-current-score-widget-form.php';
     }
 
     /**
@@ -72,7 +72,7 @@ class Multiverso_Leaderboard_Widget extends WP_Widget {
     public function update( $new_instance, $old_instance ) {
         $instance = array();
         $instance['title'] = ( ! empty( $new_instance['title'] ) ) ? sanitize_text_field( $new_instance['title'] ) : '';
-        $instance['timeframe'] = ( ! empty( $new_instance['timeframe'] ) ) ? sanitize_text_field( $new_instance['timeframe'] ) : 'complete';
+        $instance['entry_id'] = ( ! empty( $new_instance['entry_id'] ) ) ? sanitize_text_field( $new_instance['entry_id'] ) : '';
 
         return $instance;
     }
