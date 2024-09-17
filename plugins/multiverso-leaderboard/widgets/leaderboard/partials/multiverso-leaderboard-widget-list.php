@@ -21,12 +21,15 @@ require_once plugin_dir_path(__FILE__) . '../../../includes/multiverso-leaderboa
 global $wpdb;
 $table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
+$entry_id = !empty( $_POST['entry_id'] ) ? $_POST['entry_id'] : 0;
+$entry_id = $entry_id <= 0 && !empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id'] : 0;
+
 $timeframe = ! empty( $widget_instance['timeframe'] ) ? $widget_instance['timeframe'] : 'complete';
 
 if ( $timeframe === 'today' ) {
-    $leaderboard = $wpdb->get_results( "SELECT * FROM $table_name WHERE DATE(created_at) = CURDATE() ORDER BY total_score DESC, elapsed_time_seconds DESC" );
+    $leaderboard = $wpdb->get_results( "SELECT * FROM $table_name WHERE DATE(created_at) = CURDATE() ORDER BY total_score DESC, elapsed_time_seconds DESC LIMIT 10" );
 } else {
-    $leaderboard = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY total_score DESC, elapsed_time_seconds DESC" );
+    $leaderboard = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY total_score DESC, elapsed_time_seconds DESC LIMIT 10" );
 }
 ?>
 
@@ -57,7 +60,7 @@ if ( $timeframe === 'today' ) {
         <tbody>
             <?php
             foreach ($leaderboard as $lb) : ?>
-                <tr>
+                <tr <?php if ($lb->id == $entry_id) : ?> class="current-score" <?php endif; ?>>
                     <td><?php echo $lb->school_name; ?></td>
                     <td><?php echo $lb->class_name; ?></td>
                     <td><?php echo $lb->group_name; ?></td>

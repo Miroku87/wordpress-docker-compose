@@ -44,7 +44,9 @@ class Multiverso_Leaderboard_Widget extends WP_Widget {
      * @param array $args     Widget arguments.
      * @param array $instance Saved values from database.
      */
-    public function widget( $widget_args, $widget_instance ) {
+    public function widget( $widget_args, $widget_instance ) {// Enqueue the custom CSS for the widget
+        wp_enqueue_style( 'multiverso-leaderboard-widget', plugin_dir_url( __FILE__ ) . 'css/multiverso-leaderboard-widget.css' );
+
         require plugin_dir_path(__FILE__) . 'partials/multiverso-leaderboard-widget-list.php';
     }
 
@@ -73,6 +75,7 @@ class Multiverso_Leaderboard_Widget extends WP_Widget {
         $instance = array();
         $instance['title'] = ( ! empty( $new_instance['title'] ) ) ? sanitize_text_field( $new_instance['title'] ) : '';
         $instance['timeframe'] = ( ! empty( $new_instance['timeframe'] ) ) ? sanitize_text_field( $new_instance['timeframe'] ) : 'complete';
+        $instance['entry_id'] = ( ! empty( $new_instance['entry_id'] ) ) ? sanitize_text_field( $new_instance['entry_id'] ) : '';
 
         return $instance;
     }
