@@ -45,30 +45,5 @@ $seconds = $results->elapsed_time_seconds % 60;
 <?php printf(__('Hai recuperato %s gemme.', $this->plugin_name), $results->total_score); ?>
 <?php printf(__('In %d minuti e %d secondi.', $this->plugin_name), $minutes, $seconds); ?>
 </p>
-<table class="wp-list-table widefat fixed striped posts">
-    <thead>
-        <tr>
-            <th scope="col"><?php esc_html_e('Scuola', $this->plugin_name); ?></th>
-            <th scope="col"><?php esc_html_e('Classe', $this->plugin_name); ?></th>
-            <th scope="col"><?php esc_html_e('Gruppo', $this->plugin_name); ?></th>
-            <th scope="col"><?php esc_html_e('Data Creazione', $this->plugin_name); ?></th>
-            <th scope="col"><?php esc_html_e('Punteggio Totale', $this->plugin_name); ?></th>
-            <th scope="col"><?php esc_html_e('Tempo Trascorso', $this->plugin_name); ?></th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        foreach ($leaderboard as $lb) : ?>
-            <tr>
-                <td><?php echo $lb->school_name; ?></td>
-                <td><?php echo $lb->class_name; ?></td>
-                <td><?php echo $lb->group_name; ?></td>
-                <td><?php echo $lb->created_at; ?></td>
-                <td><?php echo $lb->total_score; ?></td>
-                <td><?php echo $lb->elapsed_time_seconds; ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
 
 <?php echo $widget_args['after_widget']; ?>
