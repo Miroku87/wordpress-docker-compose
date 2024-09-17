@@ -65,5 +65,8 @@ class Multiverso_Leaderboard_Widgets
 	{
 		$leaderboard_widget = new Multiverso_Leaderboard_Widget($this->plugin_name, $this->version);
 		register_widget( $leaderboard_widget );
+
+		$current_score_widget = new Multiverso_Leaderboard_Current_Score_Widget($this->plugin_name, $this->version);
+		register_widget( $current_score_widget );
 	}
 }
