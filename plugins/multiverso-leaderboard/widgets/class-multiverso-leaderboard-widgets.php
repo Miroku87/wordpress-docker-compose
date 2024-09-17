@@ -11,6 +11,7 @@
 
 
 require_once plugin_dir_path(__FILE__) . 'leaderboard/class-multiverso-leaderboard-widget.php';
+require_once plugin_dir_path(__FILE__) . 'current-score/class-multiverso-leaderboard-current-score-widget.php';
 
 /**
  * The admin-specific functionality of the plugin.

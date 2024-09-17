@@ -21,7 +21,13 @@ require_once plugin_dir_path(__FILE__) . '../../../includes/multiverso-leaderboa
 global $wpdb;
 $table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
-$entry_id = ! empty( $instance['entry_id'] ) ? $instance['entry_id'] : $_POST['entry_id'];
+$entry_id = !empty( $_POST['entry_id'] ) ? $_POST['entry_id'] : 0;
+$entry_id = $entry_id <= 0 && !empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id'] : 0;
+
+if (empty($entry_id)) {
+    esc_html_e('Nessun risultato da visualizzare', $this->plugin_name);
+    return;
+}
 
 $results = $wpdb->get_row($wpdb->prepare(
     "SELECT * FROM $table_name WHERE id = %d",
@@ -42,8 +48,8 @@ $seconds = $results->elapsed_time_seconds % 60;
 
 <h2><?php esc_html_e('Risultato Ottenuto', $this->plugin_name); ?></h2>
 <p>
-<?php printf(__('Hai recuperato %s gemme.', $this->plugin_name), $results->total_score); ?>
-<?php printf(__('In %d minuti e %d secondi.', $this->plugin_name), $minutes, $seconds); ?>
+    <?php printf(__('Hai recuperato %s gemme.', $this->plugin_name), $results->total_score); ?> <br>
+    <?php printf(__('In %d minuti e %d secondi.', $this->plugin_name), $minutes, $seconds); ?>
 </p>
 
 <?php echo $widget_args['after_widget']; ?>
