@@ -49,6 +49,17 @@
     align-items: center;
 }
 
-.vdt-pagination>button.vdt-current {
+.vdt+.vdt-pagination>button.vdt-current {
     font-weight: bold;
+}
+
+.vdt-filter:has(+.vdt) {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.vdt-filter:has(+.vdt) input {
+    width: 12rem;
 }

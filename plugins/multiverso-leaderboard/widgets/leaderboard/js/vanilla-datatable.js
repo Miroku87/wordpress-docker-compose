@@ -3,6 +3,7 @@ const DEF_SHOW_ROWS_NUM = 10;
 const DEF_SORT_BY_FIELD_ID = 0;
 const DEF_SORT_DIRECTION = "asc";
 const DEF_SHOW_PAGINATION = true;
+const DEF_SHOW_FILTER = true;
 const MAX_PAGE_TO_SHOW = 3;
 
 export default class VanillaDataTable {
@@ -11,18 +12,20 @@ export default class VanillaDataTable {
         this.fields = [];
         this.data = [];
         this.sorted_data = [];
+        this.filtered_data = [];
         this.current_start = 0;
         this.current_page = 0;
 
         this.options = {
             show_rows_num: options.show_rows_num || DEF_SHOW_ROWS_NUM,
-            sort_by_field_id: options.sort_by_field_id || DEF_SORT_BY_FIELD_ID,
-            sort_direction: options.sort_direction || DEF_SORT_DIRECTION,
+            sort_by_field_ids: options.sort_by_field_ids || [DEF_SORT_BY_FIELD_ID],
+            sort_directions: options.sort_directions || [DEF_SORT_DIRECTION],
             show_pagination: typeof options.show_pagination === "boolean" ? options.show_pagination : DEF_SHOW_PAGINATION,
+            show_filter: typeof options.show_filter === "boolean" ? options.show_filter : DEF_SHOW_FILTER,
         };
 
-        this.current_sort_field_id = this.options.sort_by_field_id;
-        this.current_sort_direction = this.options.sort_direction;
+        this.current_sort_field_ids = [...this.options.sort_by_field_ids];
+        this.current_sort_directions = [...this.options.sort_directions];
         this.current_show_rows_num = this.options.show_rows_num;
     }
 
@@ -31,12 +34,18 @@ export default class VanillaDataTable {
 
         this.fields = this.#getFields();
         this.data = this.#getData();
-        this.sorted_data = this.#sortData(this.options.sort_by_field_id, this.options.sort_direction);
+        this.filtered_data = [...this.data];
+
+        this.sorted_data = this.#sortData(this.options.sort_by_field_ids, this.options.sort_directions);
 
         this.#render(0, this.options.show_rows_num);
 
         if (this.options.show_pagination) {
             this.#renderPagination();
+        }
+
+        if (this.options.show_filter) {
+            this.#renderFilter();
         }
     };
 
@@ -102,22 +111,25 @@ export default class VanillaDataTable {
         return data;
     };
 
-    #sortData = (field_id, direction) => {
-        let sorted_data = this.data.sort((a, b) => {
-            if (a[this.fields[field_id].name].data < b[this.fields[field_id].name].data) {
-                return direction === "asc" ? -1 : 1;
-            } else if (a[this.fields[field_id].name].data > b[this.fields[field_id].name].data) {
-                return direction === "asc" ? 1 : -1;
-            } else {
-                return 0;
-            }
+    #sortData = (field_ids, directions) => {
+        const by = directions.map(dir => dir === "asc" ? 1 : -1);
+        const test = (a, b, i) => {
+            let sign = a > b ? 1 : -1;
+            return sign ? (by[i]) * sign : 0;
+        }
+
+        const sorted_data = this.filtered_data.sort((a, b) => {
+            return field_ids.map((id, i) => {
+                const field = this.fields[id];
+                return test(a[field.name].data, b[field.name].data, i)
+            }).filter(item => item !== 0)[0];
         });
 
-        return sorted_data;
+        return [...sorted_data];
     };
 
     #renderPagination = () => {
-        let num_results = this.data.length;
+        let num_results = this.filtered_data.length;
         let num_pages = Math.ceil(num_results / this.options.show_rows_num);
         //let pages_max_offset = Math.floor(MAX_PAGE_TO_SHOW / 2)
 
@@ -188,39 +200,69 @@ export default class VanillaDataTable {
         pagination.appendChild(last_btn);
     };
 
+    #renderFilter = () => {
+        let old_filter = this.element.previousElementSibling;
+        if (old_filter && old_filter.classList.contains("vdt-filter")) {
+            old_filter.remove();
+        }
+
+        let filter_div = document.createElement("div");
+        filter_div.classList.add("vdt-filter");
+        filter_div.innerHTML = "";
+
+        this.element.insertAdjacentElement("beforebegin", filter_div);
+
+        let filter_input = document.createElement("input");
+        filter_input.type = "text";
+        filter_input.placeholder = "Filtra classifica per...";
+        filter_input.addEventListener("keyup", this.#onFilterInput);
+        filter_div.appendChild(filter_input);
+    }
+
     #render = (start, qty) => {
         this.current_start = start;
 
         this.fields.forEach((e, i) => {
             e.element.classList.remove("vdt-asc", "vdt-desc");
+            let sort_field_id = this.current_sort_field_ids.indexOf(i);
 
-            if (i === this.current_sort_field_id) {
-                e.element.classList.add("vdt-" + this.current_sort_direction);
+            if (sort_field_id !== -1) {
+                e.element.classList.add("vdt-" + this.current_sort_directions[sort_field_id]);
             }
+        });
+
+        this.data.forEach(e => {
+            e.row_element.remove();
         });
 
         this.sorted_data.forEach((e, i) => {
             if (i >= start && i < start + qty) {
                 this.element.appendChild(e.row_element);
-            } else {
-                e.row_element.remove();
             }
         });
     };
 
     #onFieldNameClick = (field_id) => {
         return (e) => {
-            if (this.current_sort_field_id === field_id && this.current_sort_direction === "asc") {
-                this.current_sort_direction = "desc";
-            } else if (this.current_sort_field_id === field_id && this.current_sort_direction === "desc") {
-                this.current_sort_field_id = this.options.sort_by_field_id;
-                this.current_sort_direction = this.options.sort_direction;
-            } else {
-                this.current_sort_field_id = field_id;
-                this.current_sort_direction = "asc";
+            let field_id_pos = this.current_sort_field_ids.indexOf(field_id);
+            let direction = field_id_pos !== -1 ? this.current_sort_directions[field_id_pos] : "asc";
+
+            if (field_id_pos === -1) {
+                this.current_sort_field_ids.push(field_id);
+                this.current_sort_directions.push("asc");
+            } else if (field_id_pos !== -1 && direction === "asc") {
+                this.current_sort_directions[field_id_pos] = "desc";
+            } else if (field_id_pos !== -1 && direction === "desc") {
+                this.current_sort_field_ids.splice(field_id_pos, 1);
+                this.current_sort_directions.splice(field_id_pos, 1);
             }
 
-            this.sorted_data = this.#sortData(this.current_sort_field_id, this.current_sort_direction);
+            if (this.current_sort_field_ids.length === 0) {
+                this.current_sort_field_ids = [...this.options.sort_by_field_ids];
+                this.current_sort_directions = [...this.options.sort_directions];
+            }
+
+            this.sorted_data = this.#sortData(this.current_sort_field_ids, this.current_sort_directions);
             this.#render(this.current_start, this.current_show_rows_num);
         }
     };
@@ -232,5 +274,24 @@ export default class VanillaDataTable {
             this.#render(this.current_start, this.current_show_rows_num);
             this.#renderPagination();
         }
+    };
+
+    #onFilterInput = (e) => {
+        let filter_value = e.target.value.toLowerCase();
+
+        if (filter_value === "") {
+            this.filtered_data = [...this.data];
+        } else {
+            let filtered_data = this.data.filter(row => {
+                let row_data = this.fields.map(field => row[field.name].data.toLowerCase());
+                return row_data.some(rd => rd.includes(filter_value));
+            });
+
+            this.filtered_data = [...filtered_data];
+        }
+
+        this.sorted_data = this.#sortData(this.current_sort_field_ids, this.current_sort_directions);
+        this.#render(this.current_start, this.current_show_rows_num);
+        this.#renderPagination();
     };
 }
