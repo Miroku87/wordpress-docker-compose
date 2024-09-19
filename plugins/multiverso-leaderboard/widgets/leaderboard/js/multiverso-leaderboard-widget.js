@@ -4,8 +4,10 @@ import VanillaDataTable from './vanilla-datatable.js';
     'use strict';
 
     const init = () => {
-        const leaderboard = new VanillaDataTable(document.querySelector('#leaderboard'));
-        leaderboard.init();
+        document.querySelectorAll('table.leaderboard').forEach(e => {
+            const leaderboard = new VanillaDataTable(e);
+            leaderboard.init();
+        });
     };
 
     // wait for the DOM to have loaded

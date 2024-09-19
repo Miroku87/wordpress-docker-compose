@@ -12,7 +12,7 @@
     width: 20%;
 }
 
-.vdt th>.name {
+.vdt th>.vdt-name {
     display: block;
     background: none;
     border: none;
@@ -23,7 +23,7 @@
     text-align: left;
 }
 
-.vdt th>.arrows {
+.vdt th>.vdt-arrows {
     float: left;
     height: 100%;
     width: 20%;
@@ -33,10 +33,22 @@
     color: var(--sort-arrow-color)
 }
 
-.vdt th.asc>.arrows>.up {
+.vdt th.vdt-asc>.vdt-arrows>.vdt-up {
     color: var(--sort-arrow-color-highlighted);
 }
 
-.vdt th.desc>.arrows>.down {
+.vdt th.vdt-desc>.vdt-arrows>.vdt-down {
     color: var(--sort-arrow-color-highlighted);
+}
+
+.vdt+.vdt-pagination {
+    text-align: center;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vdt-pagination>button.vdt-current {
+    font-weight: bold;
 }

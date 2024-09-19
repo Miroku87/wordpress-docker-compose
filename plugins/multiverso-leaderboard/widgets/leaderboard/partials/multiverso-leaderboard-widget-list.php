@@ -31,12 +31,12 @@ $timeframe = ! empty( $widget_instance['timeframe'] ) ? $widget_instance['timefr
 
 if ( $timeframe === 'today' ) {
     $leaderboard =  $wpdb->get_results($wpdb->prepare(
-        "SELECT * FROM $table_name WHERE DATE(created_at) = CURDATE() AND speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC LIMIT 10",
+        "SELECT * FROM $table_name WHERE DATE(created_at) = CURDATE() AND speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
         $speedtale_id
     ));
 } else {
     $leaderboard =  $wpdb->get_results($wpdb->prepare(
-        "SELECT * FROM $table_name WHERE speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC LIMIT 10",
+        "SELECT * FROM $table_name WHERE speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
         $speedtale_id
     ));
 }
@@ -55,7 +55,7 @@ if ( $timeframe === 'today' ) {
     </p>
 <?php else : ?>
 
-    <table class="wp-list-table widefat fixed striped posts" id="leaderboard">
+    <table class="wp-list-table widefat fixed striped posts leaderboard">
         <thead>
             <tr>
                 <th scope="col"><?php esc_html_e('Gruppo', $this->plugin_name); ?></th>
