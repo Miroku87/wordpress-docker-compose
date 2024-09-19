@@ -54,7 +54,12 @@ $seconds = $results->elapsed_time_seconds % 60;
 <h2><?php esc_html_e('Risultato Ottenuto', $this->plugin_name); ?></h2>
 <p>
     <?php printf(__('Hai accumulato %s punti.', $this->plugin_name), $results->total_score); ?> <br>
-    <?php printf(__('In %d minuti e %d secondi.', $this->plugin_name), $minutes, $seconds); ?>
+    <?php printf(__('In %d minuti e %d secondi.', $this->plugin_name), $minutes, $seconds); ?> <br>
+    <?php printf(__('Hai trovato %d cristalli, di cui %d nascosti.', $this->plugin_name), $results->crystals_num, $results->hidden_crystals_num); ?> <br>
+    <?php printf(__('Hai completato %d missioni secondarie.', $this->plugin_name), $results->side_missions); ?> <br>
+    <?php if ($results->time_bonus > 0) : ?>
+        <?php printf(__('Visto che hai completato il gioco prima del tempo previsto hai ricevuto %d punti bonus.', $this->plugin_name), $results->time_bonus); ?>
+    <?php endif; ?>
 </p>
 
 <?php echo $widget_args['after_widget']; ?>

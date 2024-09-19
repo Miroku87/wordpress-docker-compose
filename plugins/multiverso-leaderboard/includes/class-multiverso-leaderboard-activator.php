@@ -63,6 +63,7 @@ class Multiverso_Leaderboard_Activator
 			total_score int DEFAULT NULL,
 			time_bonus int DEFAULT NULL,
 			crystals_num int DEFAULT NULL,
+			hidden_crystals_num int DEFAULT NULL,
 			side_missions int DEFAULT NULL,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
