@@ -1,0 +1,42 @@
+.vdt {
+    --sort-arrow-color: #aaaaaa;
+    --sort-arrow-color-highlighted: #575757;
+}
+
+.vdt th {
+    padding: 0;
+    width: 16%;
+}
+
+.vdt th:first-child {
+    width: 20%;
+}
+
+.vdt th>.name {
+    display: block;
+    background: none;
+    border: none;
+    float: left;
+    height: 100%;
+    width: 80%;
+    padding: 10px;
+    text-align: left;
+}
+
+.vdt th>.arrows {
+    float: left;
+    height: 100%;
+    width: 20%;
+    padding: 10px 0;
+    font-size: 11px;
+    line-height: 11px;
+    color: var(--sort-arrow-color)
+}
+
+.vdt th.asc>.arrows>.up {
+    color: var(--sort-arrow-color-highlighted);
+}
+
+.vdt th.desc>.arrows>.down {
+    color: var(--sort-arrow-color-highlighted);
+}

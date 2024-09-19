@@ -34,6 +34,11 @@ $results = $wpdb->get_row($wpdb->prepare(
     $entry_id,
 ));
 
+if ( is_null($results) ) {
+    esc_html_e('Nessun risultato da visualizzare', $this->plugin_name);
+    return;
+}
+
 $minutes = floor($results->elapsed_time_seconds / 60);
 $seconds = $results->elapsed_time_seconds % 60;
 
@@ -48,7 +53,7 @@ $seconds = $results->elapsed_time_seconds % 60;
 
 <h2><?php esc_html_e('Risultato Ottenuto', $this->plugin_name); ?></h2>
 <p>
-    <?php printf(__('Hai recuperato %s gemme.', $this->plugin_name), $results->total_score); ?> <br>
+    <?php printf(__('Hai accumulato %s punti.', $this->plugin_name), $results->total_score); ?> <br>
     <?php printf(__('In %d minuti e %d secondi.', $this->plugin_name), $minutes, $seconds); ?>
 </p>
 

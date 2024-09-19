@@ -12,9 +12,10 @@
  * @subpackage Multiverso_Leaderboard/admin/partials/leaderboard
  */
 
-$title = ! empty( $widget_instance['title'] ) ? $widget_instance['title'] : esc_html__( 'Classifica', $this->plugin_name );
+$title = ! empty( $widget_instance['title'] ) ? $widget_instance['title'] : '';
 $timeframe = ! empty( $widget_instance['timeframe'] ) ? $widget_instance['timeframe'] : esc_html__( 'Completa', $this->plugin_name );
-$entry_id = ! empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id'] : "";
+$speedtale_id = ! empty( $widget_instance['speedtale_id'] ) ? $widget_instance['speedtale_id'] : 'multiverso';
+$entry_id = ! empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id'] : '';
 ?>
 
 <p>
@@ -24,7 +25,8 @@ $entry_id = ! empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id
         id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" 
         name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" 
         type="text" 
-        value="<?php echo esc_attr( $title ); ?>">
+        value="<?php echo esc_attr( $title ); ?>"
+        autocomplete="off">
 </p>
 
 <p>
@@ -36,11 +38,23 @@ $entry_id = ! empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id
 </p>
 
 <p>
+    <label for="<?php echo esc_attr( $this->get_field_id( 'speedtale_id' ) ); ?>"><?php esc_attr_e( 'Speedtale:', $this->plugin_name ); ?></label>
+    <input 
+        class="widefat" 
+        id="<?php echo esc_attr( $this->get_field_id( 'speedtale_id' ) ); ?>" 
+        name="<?php echo esc_attr( $this->get_field_name( 'speedtale_id' ) ); ?>" 
+        type="text" 
+        value="<?php echo esc_attr( $speedtale_id ); ?>"
+        autocomplete="off">
+</p>
+
+<p>
     <label for="<?php echo esc_attr( $this->get_field_id( 'entry_id' ) ); ?>"><?php esc_attr_e( 'ID Voce Classifica:', $this->plugin_name ); ?></label>
     <input 
         class="widefat" 
         id="<?php echo esc_attr( $this->get_field_id( 'entry_id' ) ); ?>" 
         name="<?php echo esc_attr( $this->get_field_name( 'entry_id' ) ); ?>" 
         type="text" 
-        value="<?php echo esc_attr( $entry_id ); ?>">
+        value="<?php echo esc_attr( $entry_id ); ?>"
+        autocomplete="off">
 </p>

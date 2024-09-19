@@ -45,7 +45,9 @@ class Multiverso_Leaderboard_Widget extends WP_Widget {
      * @param array $instance Saved values from database.
      */
     public function widget( $widget_args, $widget_instance ) {// Enqueue the custom CSS for the widget
-        wp_enqueue_style( 'multiverso-leaderboard-widget', plugin_dir_url( __FILE__ ) . 'css/multiverso-leaderboard-widget.css' );
+        wp_enqueue_style( 'multiverso-leaderboard-widget-main', plugin_dir_url( __FILE__ ) . 'css/multiverso-leaderboard-widget.css' );
+        wp_enqueue_style( 'vanilla-datatable', plugin_dir_url( __FILE__ ) . 'css/vanilla-datatable.css' );
+        wp_enqueue_script_module( 'multiverso-leaderboard-widget-main', plugin_dir_url( __FILE__ ) . 'js/multiverso-leaderboard-widget.js', array(), $this->version, true );
 
         require plugin_dir_path(__FILE__) . 'partials/multiverso-leaderboard-widget-list.php';
     }
@@ -76,6 +78,7 @@ class Multiverso_Leaderboard_Widget extends WP_Widget {
         $instance['title'] = ( ! empty( $new_instance['title'] ) ) ? sanitize_text_field( $new_instance['title'] ) : '';
         $instance['timeframe'] = ( ! empty( $new_instance['timeframe'] ) ) ? sanitize_text_field( $new_instance['timeframe'] ) : 'complete';
         $instance['entry_id'] = ( ! empty( $new_instance['entry_id'] ) ) ? sanitize_text_field( $new_instance['entry_id'] ) : '';
+        $instance['speedtale_id'] = ( ! empty( $new_instance['speedtale_id'] ) ) ? sanitize_text_field( $new_instance['speedtale_id'] ) : '';
 
         return $instance;
     }

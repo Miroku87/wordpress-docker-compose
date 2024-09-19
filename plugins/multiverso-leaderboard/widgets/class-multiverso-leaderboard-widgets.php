@@ -58,7 +58,7 @@ class Multiverso_Leaderboard_Widgets
 	}
 
 	/**
-	 * Prints the admin page.
+	 * Register the needed hooks for the widgets.
 	 *
 	 * @since    1.0.0
 	 */
@@ -69,5 +69,15 @@ class Multiverso_Leaderboard_Widgets
 
 		$current_score_widget = new Multiverso_Leaderboard_Current_Score_Widget($this->plugin_name, $this->version);
 		register_widget( $current_score_widget );
+	}
+
+	/**
+	 * Adds the needed filters for the widgets.
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_widgets_filters($tag, $handle, $src)
+	{
+		//Multiverso_Leaderboard_Widget::module_script($tag, $handle, $src);
 	}
 }

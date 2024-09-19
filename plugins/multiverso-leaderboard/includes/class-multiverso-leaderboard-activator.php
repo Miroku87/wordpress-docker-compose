@@ -59,8 +59,11 @@ class Multiverso_Leaderboard_Activator
 			group_name varchar(255) DEFAULT '' NOT NULL,
 			speedtale_id varchar(255) NOT NULL,
 			created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-			total_score int DEFAULT NULL,
 			elapsed_time_seconds int DEFAULT NULL,			
+			total_score int DEFAULT NULL,
+			time_bonus int DEFAULT NULL,
+			crystals_num int DEFAULT NULL,
+			side_missions int DEFAULT NULL,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 		dbDelta($sql);

@@ -48,6 +48,8 @@ $leaderboard = $wpdb->get_results("SELECT * FROM $table_name ORDER BY id DESC");
         <tbody>
             <?php
             foreach ($leaderboard as $lb) : ?>
+                <?php $minutes = floor($lb->elapsed_time_seconds / 60); ?>
+                <?php $seconds = $lb->elapsed_time_seconds % 60; ?>
                 <tr>
                     <td><?php echo $lb->id; ?></td>
                     <td><?php echo $lb->school_name; ?></td>
@@ -56,7 +58,7 @@ $leaderboard = $wpdb->get_results("SELECT * FROM $table_name ORDER BY id DESC");
                     <td><?php echo $lb->speedtale_id; ?></td>
                     <td><?php echo $lb->created_at; ?></td>
                     <td><?php echo $lb->total_score; ?></td>
-                    <td><?php echo $lb->elapsed_time_seconds; ?></td>
+                    <td><?php printf(__('%d minuti e %d secondi', $this->plugin_name), $minutes, $seconds); ?></td>
                     <td class="actions">
                         <form method="post" action="">
                             <?php wp_nonce_field('multiverso_leaderboard_generate_action', 'multiverso_leaderboard_nonce_field'); ?>

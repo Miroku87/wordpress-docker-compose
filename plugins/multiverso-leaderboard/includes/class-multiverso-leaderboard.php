@@ -169,13 +169,13 @@ class Multiverso_Leaderboard
 
 		$plugin_admin = new Multiverso_Leaderboard_Admin($this->get_plugin_name(), $this->get_version());
 
+		$this->loader->add_filter('rest_pre_serve_request', $plugin_admin, 'rest_pre_serve_request');
+
 		$this->loader->add_action('rest_api_init', $plugin_admin, 'rest_api_init');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
 		$this->loader->add_action('admin_menu', $plugin_admin, 'admin_menu');
 		$this->loader->add_action('admin_init', $plugin_admin, 'admin_init');
-
-		$this->loader->add_filter('rest_pre_serve_request', $plugin_admin, 'rest_pre_serve_request');
 	}
 
 	/**
@@ -205,7 +205,10 @@ class Multiverso_Leaderboard
 	{
 		$plugin_widgets = new Multiverso_Leaderboard_Widgets($this->get_plugin_name(), $this->get_version());
 
+		//$this->loader->add_filter('script_loader_tag', $plugin_widgets, 'add_widgets_filters', 10, 3);
+
 		$this->loader->add_action('widgets_init', $plugin_widgets, 'register_widgets');
+
 	}
 
 	/**

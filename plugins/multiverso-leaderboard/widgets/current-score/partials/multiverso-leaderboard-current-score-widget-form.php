@@ -12,7 +12,7 @@
  * @subpackage Multiverso_Leaderboard/admin/partials/leaderboard
  */
 
-$title = ! empty( $widget_instance['title'] ) ? $widget_instance['title'] : esc_html__( 'Classifica', $this->plugin_name );
+$title = ! empty( $widget_instance['title'] ) ? $widget_instance['title'] : '';
 $entry_id = ! empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id'] : "";
 ?>
 
