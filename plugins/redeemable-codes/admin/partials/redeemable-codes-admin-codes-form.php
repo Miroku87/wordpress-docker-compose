@@ -22,13 +22,23 @@
     <table class="form-table code-type-custom" id="form_table">
         <tr>
             <th scope="row"><label for="speedtale_id"><?php esc_html_e('Speedtale ID', $this->plugin_name); ?></label></th>
-            <td><input name="speedtale_id" type="text" id="speedtale_id" value="" class="small-text" autocomplete="off"></td>
+            <td><input name="speedtale_id" type="text" id="speedtale_id" value="" class="regular-text" autocomplete="off"></td>
             <td><?php esc_html_e('The speedtale ID associated with the item.', $this->plugin_name); ?></td>
         </tr>
         <tr>
             <th scope="row"><label for="item"><?php esc_html_e('Item', $this->plugin_name); ?></label></th>
             <td><input name="item" type="text" id="item" value="" class="regular-text" autocomplete="off"></td>
             <td><?php esc_html_e('The item to be redeemed.', $this->plugin_name); ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><label for="target_page"><?php esc_html_e('Target Page', $this->plugin_name); ?></label></th>
+            <td><input name="target_page" type="text" id="target_page" value="" class="regular-text" autocomplete="off"></td>
+            <td><?php esc_html_e('The page where the code works.', $this->plugin_name); ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><label for="score_offset"><?php esc_html_e('Score Offset', $this->plugin_name); ?></label></th>
+            <td><input name="score_offset" type="number" id="score_offset" value="0" class="small-text" autocomplete="off"></td>
+            <td><?php esc_html_e('The points to add/remove to the score.', $this->plugin_name); ?></td>
         </tr>
         <tr>
             <th scope="row"><label for="expiration_days"><?php esc_html_e('Expiration Date (Days)', $this->plugin_name); ?></label></th>
@@ -60,7 +70,7 @@
         </tr>
         <tr class="code-type custom">
             <th scope="row"><label for="is_unique"><?php esc_html_e('Is Unique', $this->plugin_name); ?></label></th>
-            <td><input name="is_unique" type="checkbox" id="is_unique" value="1" autocomplete="off"></td>
+            <td><input name="is_unique" type="checkbox" id="is_unique" autocomplete="off"></td>
             <td>
                 <?php esc_html_e('Check this if this code should be unique for this Speedtale.', $this->plugin_name); ?></br>
                 <?php esc_html_e('Just one user will be able to redeem it.', $this->plugin_name); ?>

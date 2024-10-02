@@ -15,7 +15,12 @@ restart: stop run
 
 .PHONY: release-redeemable-codes
 release-redeemable-codes:
-	cp -r ./plugins/redeemable-codes ../speedtale-wp/wp-content/plugins/
+	./ftp-upload.sh \
+		ftp.viaggionelmultiverso.it \
+		ipfzhzcr \
+		${MULTIVERSO_FTP_PASSWORD} \
+		/public_html/wp-content/plugins/redeemable-codes \
+		plugins/redeemable-codes
 
 .PHONY: release-multiverso-leaderboard
 release-multiverso-leaderboard:
