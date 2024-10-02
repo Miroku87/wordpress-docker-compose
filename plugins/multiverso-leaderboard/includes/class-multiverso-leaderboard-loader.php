@@ -6,8 +6,8 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  */
 
 /**
@@ -17,11 +17,11 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  * @author     Andrea Silvestri <andrea.silvestri87@yahoo.it>
  */
-class Redeemable_Codes_Loader {
+class Multiverso_Leaderboard_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.

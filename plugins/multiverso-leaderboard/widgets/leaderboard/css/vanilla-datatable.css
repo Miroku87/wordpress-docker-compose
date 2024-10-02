@@ -1,0 +1,65 @@
+.vdt {
+    --sort-arrow-color: #aaaaaa;
+    --sort-arrow-color-highlighted: #575757;
+}
+
+.vdt th {
+    padding: 0;
+    width: 16%;
+}
+
+.vdt th:first-child {
+    width: 20%;
+}
+
+.vdt th>.vdt-name {
+    display: block;
+    background: none;
+    border: none;
+    float: left;
+    height: 100%;
+    width: 80%;
+    padding: 10px;
+    text-align: left;
+}
+
+.vdt th>.vdt-arrows {
+    float: left;
+    height: 100%;
+    width: 20%;
+    padding: 10px 0;
+    font-size: 11px;
+    line-height: 11px;
+    color: var(--sort-arrow-color)
+}
+
+.vdt th.vdt-asc>.vdt-arrows>.vdt-up {
+    color: var(--sort-arrow-color-highlighted);
+}
+
+.vdt th.vdt-desc>.vdt-arrows>.vdt-down {
+    color: var(--sort-arrow-color-highlighted);
+}
+
+.vdt+.vdt-pagination {
+    text-align: center;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vdt+.vdt-pagination>button.vdt-current {
+    font-weight: bold;
+}
+
+.vdt-filter:has(+.vdt) {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.vdt-filter:has(+.vdt) input {
+    width: 12rem;
+}

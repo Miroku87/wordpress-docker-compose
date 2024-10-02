@@ -6,8 +6,8 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/public
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/public
  */
 
 /**
@@ -16,11 +16,11 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the public-facing stylesheet and JavaScript.
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/public
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/public
  * @author     Andrea Silvestri <andrea.silvestri87@yahoo.it>
  */
-class Redeemable_Codes_Public {
+class Multiverso_Leaderboard_Public {
 
 	/**
 	 * The ID of this plugin.
@@ -65,10 +65,10 @@ class Redeemable_Codes_Public {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Redeemable_Codes_Loader as all of the hooks are defined
+		 * defined in Multiverso_Leaderboard_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Redeemable_Codes_Loader will then create the relationship
+		 * The Multiverso_Leaderboard_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
@@ -88,10 +88,10 @@ class Redeemable_Codes_Public {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Redeemable_Codes_Loader as all of the hooks are defined
+		 * defined in Multiverso_Leaderboard_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Redeemable_Codes_Loader will then create the relationship
+		 * The Multiverso_Leaderboard_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */

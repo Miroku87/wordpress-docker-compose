@@ -1,7 +1,8 @@
 <?php
-// define('WP_DEBUG', true);
-// define('WP_DEBUG_DISPLAY', true);
-// @ini_set('display_errors', 1);
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', true);
+@ini_set('display_errors', 1);
 
 /**
  * The plugin bootstrap file
@@ -18,7 +19,7 @@
  * @wordpress-plugin
  * Plugin Name:       Multiverso Leaderboard
  * Plugin URI:        https://andreasilvestri.dev/wp-plugins/multiverso-leaderboard
- * Description:       A simple system to generate and redeem codes.
+ * Description:       A simple system to save and show leaderboard scores.
  * Version:           1.0.0
  * Author:            Andrea Silvestri
  * Author URI:        https://andreasilvestri.dev/
@@ -42,24 +43,24 @@ require_once plugin_dir_path(__FILE__) . 'includes/multiverso-leaderboard-consta
  * The code that runs during plugin activation.
  * This action is documented in includes/class-multiverso-leaderboard-activator.php
  */
-function activate_redeemable_codes()
+function activate_multiverso_leaderboard()
 {
 	require_once plugin_dir_path(__FILE__) . 'includes/class-multiverso-leaderboard-activator.php';
-	Redeemable_Codes_Activator::activate();
+	Multiverso_Leaderboard_Activator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-multiverso-leaderboard-deactivator.php
  */
-function deactivate_redeemable_codes()
+function deactivate_multiverso_leaderboard()
 {
 	require_once plugin_dir_path(__FILE__) . 'includes/class-multiverso-leaderboard-deactivator.php';
-	Redeemable_Codes_Deactivator::deactivate();
+	Multiverso_Leaderboard_Deactivator::deactivate();
 }
 
-register_activation_hook(__FILE__, 'activate_redeemable_codes');
-register_deactivation_hook(__FILE__, 'deactivate_redeemable_codes');
+register_activation_hook(__FILE__, 'activate_multiverso_leaderboard');
+register_deactivation_hook(__FILE__, 'deactivate_multiverso_leaderboard');
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -76,10 +77,11 @@ require plugin_dir_path(__FILE__) . 'includes/class-multiverso-leaderboard.php';
  *
  * @since    1.0.0
  */
-function run_redeemable_codes()
+function run_multiverso_leaderboard()
 {
 
-	$plugin = new Redeemable_Codes();
+	$plugin = new Multiverso_Leaderboard();
 	$plugin->run();
 }
-run_redeemable_codes();
+
+run_multiverso_leaderboard();

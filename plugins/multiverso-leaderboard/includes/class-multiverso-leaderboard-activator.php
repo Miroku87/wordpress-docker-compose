@@ -6,8 +6,8 @@
  * @link       https://andreasilvestri.dev
  * @since      1.0.0
  *
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  */
 
 /**
@@ -22,11 +22,11 @@ require_once ABSPATH . 'wp-admin/includes/upgrade.php';
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @since      1.0.0
- * @package    Redeemable_Codes
- * @subpackage Redeemable_Codes/includes
+ * @package    Multiverso_Leaderboard
+ * @subpackage Multiverso_Leaderboard/includes
  * @author     Andrea Silvestri <andrea.silvestri87@yahoo.it>
  */
-class Redeemable_Codes_Activator
+class Multiverso_Leaderboard_Activator
 {
 
 	/**
@@ -36,35 +36,35 @@ class Redeemable_Codes_Activator
 	 */
 	public static function activate()
 	{
-		Redeemable_Codes_Activator::generate_redeemable_codes_table();
-		Redeemable_Codes_Activator::generate_allowed_origins_table();
+		Multiverso_Leaderboard_Activator::generate_leaderboard_table();
+		Multiverso_Leaderboard_Activator::generate_allowed_origins_table();
 	}
 
 	/**
-	 * Creates the redeemable codes table.
+	 * Creates the leaderboard table.
 	 *
 	 * @since    1.0.0
 	 */
-	private static function generate_redeemable_codes_table()
+	private static function generate_leaderboard_table()
 	{
 		global $wpdb;
-		$table_name = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
-			code varchar(7) NOT NULL,
+			school_name varchar(255) DEFAULT '' NOT NULL,
+			class_name varchar(255) DEFAULT '' NOT NULL,
+			group_name varchar(255) DEFAULT '' NOT NULL,
 			speedtale_id varchar(255) NOT NULL,
-			item_to_redeem varchar(255) DEFAULT '' NOT NULL,
 			created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-			expiration_date timestamp DEFAULT NULL,
-			redeemed_at timestamp DEFAULT NULL,
-			redeemed_by varchar(255) DEFAULT NULL,
-			redeemed_ip varchar(255) DEFAULT NULL,
-			redeemed_user_agent varchar(255) DEFAULT NULL,
-			is_unique tinyint(1) DEFAULT 0 NOT NULL,
-			is_valid tinyint(1) DEFAULT 1 NOT NULL,
+			elapsed_time_seconds int DEFAULT NULL,			
+			total_score int DEFAULT NULL,
+			time_bonus int DEFAULT NULL,
+			crystals_num int DEFAULT NULL,
+			hidden_crystals_num int DEFAULT NULL,
+			side_missions int DEFAULT NULL,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 		dbDelta($sql);
@@ -78,7 +78,7 @@ class Redeemable_Codes_Activator
 	private static function generate_allowed_origins_table()
 	{
 		global $wpdb;
-		$table_name = $wpdb->prefix . REDEEMABLE_CODE_ORIGINS_TABLE_NAME;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_ORIGINS_TABLE_NAME;
 
 		$charset_collate = $wpdb->get_charset_collate();
 
