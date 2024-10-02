@@ -257,10 +257,10 @@ export default class VanillaDataTable {
                 this.current_sort_directions.splice(field_id_pos, 1);
             }
 
-            if (this.current_sort_field_ids.length === 0) {
-                this.current_sort_field_ids = [...this.options.sort_by_field_ids];
-                this.current_sort_directions = [...this.options.sort_directions];
-            }
+            // if (this.current_sort_field_ids.length === 0) {
+            //     this.current_sort_field_ids = [...this.options.sort_by_field_ids];
+            //     this.current_sort_directions = [...this.options.sort_directions];
+            // }
 
             this.sorted_data = this.#sortData(this.current_sort_field_ids, this.current_sort_directions);
             this.#render(this.current_start, this.current_show_rows_num);
