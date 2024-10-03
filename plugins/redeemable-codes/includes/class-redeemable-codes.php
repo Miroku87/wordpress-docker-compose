@@ -146,9 +146,9 @@ class Redeemable_Codes
 	private function set_locale()
 	{
 
-		$plugin_i18n = new Redeemable_Codes_i18n($this->plugin_name);
+		//$plugin_i18n = new Redeemable_Codes_i18n($this->plugin_name);
 
-		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
+		//$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
 	}
 
 	/**

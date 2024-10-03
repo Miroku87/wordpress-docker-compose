@@ -53,7 +53,7 @@ class Redeemable_Codes_i18n
 	 */
 	public function load_plugin_textdomain()
 	{
-		$path = dirname(dirname(plugin_basename(__FILE__))) . '/languages/';
-		load_plugin_textdomain($this->plugin_name, false, $path);
+		//$path = dirname(dirname(plugin_basename(__FILE__))) . '/languages/';
+		//load_plugin_textdomain($this->plugin_name, false, $path);
 	}
 }

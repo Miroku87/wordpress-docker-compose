@@ -215,3 +215,9 @@ msgstr ""
 
 msgid "Code already exists in the database and is set as unique."
 msgstr ""
+
+msgid "Score Offset"
+msgstr ""
+
+msgid "Item name or Score Offset must be set."
+msgstr ""

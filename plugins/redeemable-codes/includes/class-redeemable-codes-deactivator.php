@@ -36,6 +36,7 @@ class Redeemable_Codes_Deactivator
 	public static function deactivate()
 	{
 		Redeemable_Codes_Deactivator::drop_redeemable_codes_table();
+		Redeemable_Codes_Deactivator::drop_redeemable_codes_redeemed_table();
 		Redeemable_Codes_Deactivator::drop_allowed_origins_table();
 	}
 
@@ -49,7 +50,27 @@ class Redeemable_Codes_Deactivator
 		global $wpdb;
 		$table_name = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
 
+		$wpdb->query("SET foreign_key_checks = 0");
 		$wpdb->query("DROP TABLE IF EXISTS $table_name");
+		$wpdb->query("SET foreign_key_checks = 1");
+
+		delete_transient('redeemable_code_rate_limit_' . $_SERVER['REMOTE_ADDR']);
+	}
+
+	/**
+	 * Drops the redeemable codes redeemed_table.
+	 *
+	 * @since    1.0.0
+	 */
+	private static function drop_redeemable_codes_redeemed_table()
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . REDEEMABLE_CODE_REDEEMED_CODES_TABLE_NAME;
+
+		$wpdb->query("SET foreign_key_checks = 0");
+		$wpdb->query("DROP TABLE IF EXISTS $table_name");
+		$wpdb->query("SET foreign_key_checks = 1");
+
 		delete_transient('redeemable_code_rate_limit_' . $_SERVER['REMOTE_ADDR']);
 	}
 
@@ -63,7 +84,10 @@ class Redeemable_Codes_Deactivator
 		global $wpdb;
 		$table_name = $wpdb->prefix . REDEEMABLE_CODE_ORIGINS_TABLE_NAME;
 
+		$wpdb->query("SET foreign_key_checks = 0");
 		$wpdb->query("DROP TABLE IF EXISTS $table_name");
+		$wpdb->query("SET foreign_key_checks = 1");
+		
 		delete_transient('redeemable_code_rate_limit_' . $_SERVER['REMOTE_ADDR']);
 	}
 }

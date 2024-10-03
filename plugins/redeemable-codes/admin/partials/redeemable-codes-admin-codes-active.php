@@ -40,6 +40,9 @@ $active_codes = $wpdb->get_results(
                 <th scope="col"><?php esc_html_e('Code', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Speedtale ID', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Item to Redeem', $this->plugin_name); ?></th>
+                <th scope="col"><?php esc_html_e('Score Offset', $this->plugin_name); ?></th>
+                <th scope="col"><?php esc_html_e('Target Page', $this->plugin_name); ?></th>
+                <th scope="col"><?php esc_html_e('Unique', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Expiration Date', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Created At', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Actions', $this->plugin_name); ?></th>
@@ -52,6 +55,9 @@ $active_codes = $wpdb->get_results(
                     <td><?php echo $code->code; ?></td>
                     <td><?php echo $code->speedtale_id; ?></td>
                     <td><?php echo $code->item_to_redeem; ?></td>
+                    <td><?php echo $code->score_offset; ?></td>
+                    <td><?php echo $code->target_page; ?></td>
+                    <td><?php echo $code->is_unique ? "unique" : "not unique"; ?></td>
                     <td><?php echo $code->expiration_date; ?></td>
                     <td><?php echo $code->created_at; ?></td>
                     <td class="actions">

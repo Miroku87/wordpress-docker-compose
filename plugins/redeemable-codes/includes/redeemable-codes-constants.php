@@ -2,6 +2,7 @@
 
 const REDEEMABLE_CODES_VERSION = '1.0.0';
 const REDEEMABLE_CODE_CODES_TABLE_NAME = 'redeemable_codes_codes';
+const REDEEMABLE_CODE_REDEEMED_CODES_TABLE_NAME = 'redeemable_codes_redeemed_codes';
 const REDEEMABLE_CODE_ORIGINS_TABLE_NAME = 'redeemable_codes_allowed_origins';
 const REDEEMABLE_CODE_EXPIRATION_DAYS = 30;
 const REDEEMABLE_CODE_RATE_LIMIT_SECONDS = 60;

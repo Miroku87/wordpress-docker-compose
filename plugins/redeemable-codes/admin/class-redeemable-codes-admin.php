@@ -14,7 +14,6 @@
  * The file that contains all the constants.
  */
 require_once plugin_dir_path(__FILE__) . '../includes/redeemable-codes-constants.php';
-require_once plugin_dir_path(__FILE__) . '../includes/debug-utils.php';
 
 /**
  * The admin-specific functionality of the plugin.
@@ -152,7 +151,9 @@ class Redeemable_Codes_Admin
 	{
 		global $wpdb;
 		$inputCode = $data['code'];
-		$table_name = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
+		$target_page = urldecode($data['target_page']);
+		$table_name_all = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
+		$table_name_redeemed = $wpdb->prefix . REDEEMABLE_CODE_REDEEMED_CODES_TABLE_NAME;
 
 		$rate_limit = $this->check_rate_limit();
 		if (is_wp_error($rate_limit)) {
@@ -160,33 +161,48 @@ class Redeemable_Codes_Admin
 		}
 
 		$codeData = $wpdb->get_row($wpdb->prepare(
-			"SELECT * FROM $table_name WHERE code = %s AND is_valid = 1 AND expiration_date > NOW()",
+			"SELECT * FROM $table_name_all WHERE code = %s AND target_page = %s AND ( expiration_date > NOW() OR expiration_date IS NULL )",
+			$inputCode,
+			$target_page
+		));
+
+		if(!$codeData) {
+			return new WP_Error('code_not_found', 'Code not found', array('status' => 404));
+		}
+
+		$redeemData = $wpdb->get_results($wpdb->prepare(
+			"SELECT * FROM $table_name_redeemed WHERE redeemed_id = %d",
+			$codeData->id
+		));
+
+		if (count($redeemData) > 0 && $codeData->is_unique === "1") {
+			return new WP_Error('code_already_redeemed', 'Code can be redeemed just once', array('status' => 400));
+		}
+
+		$this->reset_rate_limit();
+
+		$resp = $wpdb->insert(
+			$table_name_redeemed,
+			array(
+				'redeemed_id' => intval($codeData->id),
+				'redeemed_at' => current_time('mysql'),
+				'redeemed_by' => $data['redeemer'],
+				'redeemed_ip' => $_SERVER['REMOTE_ADDR'],
+				'redeemed_user_agent' => $_SERVER['HTTP_USER_AGENT']
+			),
+			array('%d', '%s', '%s', '%s', '%s'),
+		);
+
+		$codeData = $wpdb->get_row($wpdb->prepare(
+			"SELECT * FROM $table_name_all WHERE code = %s",
 			$inputCode
 		));
 
-		if ($codeData) {
-			$this->reset_rate_limit();
+		$codeData->score_offset = intval($codeData->score_offset);
+		$codeData->is_valid = $codeData->is_valid === "1" ? true : false;
+		$codeData->is_unique = $codeData->is_unique === "1" ? true : false;
 
-			$wpdb->update(
-				$table_name,
-				array(
-					'is_valid' => 0,
-					'redeemed_at' => current_time('mysql'),
-					'redeemed_by' => $data['redeemer'],
-					'redeemed_ip' => $_SERVER['REMOTE_ADDR'],
-					'redeemed_user_agent' => $_SERVER['HTTP_USER_AGENT']
-				),
-				array('id' => $codeData->id, 'is_valid' => 1),
-				array('%d', '%s', '%s', '%s', '%s'),
-				array('%d', '%d')
-			);
-
-			return new WP_REST_Response($codeData, 200);
-		}
-
-		$this->increment_rate_limit();
-
-		return new WP_Error('code_not_found', 'Code not found', array('status' => 404));
+		return new WP_REST_Response($codeData, 200);
 	}
 
 	/**
@@ -286,9 +302,19 @@ class Redeemable_Codes_Admin
 
 		if (isset($_POST['item']) && $_POST['item'] != '') {
 			$item = $_POST['item'];
-		} else {
-			add_settings_error('redeemable-codes-notices', 'redeemable-codes-notices', __('Missing item name.', $this->plugin_name), 'error');
+		}
+
+		if (isset($_POST['score_offset']) && $_POST['score_offset'] != 0) {
+			$score_offset = $_POST['score_offset'];
+		}
+		
+		if (!isset($item) && !isset($score_offset)) {
+			add_settings_error('redeemable-codes-notices', 'redeemable-codes-notices', __('Item name or Score Offset must be set.', $this->plugin_name), 'error');
 			return;
+		}
+
+		if (isset($_POST['target_page']) && $_POST['target_page'] != 0) {
+			$target_page = $_POST['target_page'];
 		}
 
 		if (isset($_POST['expiration_days']) && intval($_POST['expiration_days']) > 0) {
@@ -299,10 +325,10 @@ class Redeemable_Codes_Admin
 
 		switch ($code_type) {
 			case "random":
-				$this->handle_random_code_submission($speedtale_id, $item, $expiration_days);
+				$this->handle_random_code_submission($speedtale_id, $item, $target_page, $expiration_days);
 				break;
 			case "custom":
-				$this->handle_custom_code_submission($speedtale_id, $item, $expiration_days);
+				$this->handle_custom_code_submission($speedtale_id, $item, $score_offset, $target_page, $expiration_days);
 				break;
 			default:
 				$message = sprintf(__('Invalid code type `%s`.', $this->plugin_name), $code_type);
@@ -315,7 +341,7 @@ class Redeemable_Codes_Admin
 	 *
 	 * @since    1.0.0
 	 */
-	private function handle_random_code_submission($speedtale_id, $item, $expiration_days)
+	private function handle_random_code_submission($speedtale_id, $item, $target_page, $expiration_days)
 	{
 		if (isset($_POST['number_of_codes']) && intval($_POST['number_of_codes']) > 0) {
 			$number_of_codes = intval($_POST['number_of_codes']);
@@ -324,7 +350,7 @@ class Redeemable_Codes_Admin
 			return;
 		}
 
-		$generated_codes = $this->generate_and_store_multiple_redeemable_codes($number_of_codes, $speedtale_id, $item, $expiration_days);
+		$generated_codes = $this->generate_and_store_multiple_redeemable_codes($number_of_codes, $speedtale_id, $item, $target_page, $expiration_days);
 
 		// Provide admin notice or other feedback
 		if (count($generated_codes) > 0) {
@@ -344,7 +370,7 @@ class Redeemable_Codes_Admin
 	 *
 	 * @since    1.0.0
 	 */
-	private function handle_custom_code_submission($speedtale_id, $item, $expiration_days)
+	private function handle_custom_code_submission($speedtale_id, $item, $score_offset, $target_page, $expiration_days)
 	{
 		if (isset($_POST['custom_code']) && $_POST['custom_code'] != '') {
 			$custom_code = $_POST['custom_code'];
@@ -353,13 +379,12 @@ class Redeemable_Codes_Admin
 			return;
 		}
 
-		$is_unique = false;
-		if (isset($_POST['is_unique']) && intval($_POST['is_unique']) == 1) {
-			$is_unique = true;
+		$is_unique = False;
+		if (isset($_POST['is_unique'])) {
+			$is_unique = True;
 		}
 
 		$codeInDb = $this->get_redeemable_code($speedtale_id, $custom_code);
-		Debug_Utils::js_console_log(print_r($codeInDb, true));
 
 		if ($is_unique && !is_wp_error($codeInDb)) {
 			add_settings_error('redeemable-codes-notices', 'redeemable-codes-notices', __('Code should be unique but already exists in the database.', $this->plugin_name), 'error');
@@ -371,9 +396,9 @@ class Redeemable_Codes_Admin
 			return;
 		}
 
-		$resp = $this->store_redeemable_code($custom_code, $speedtale_id, $item, $expiration_days, $is_unique);
+		$resp = $this->store_redeemable_code($custom_code, $speedtale_id, $item, $score_offset, $target_page, $expiration_days, $is_unique);
 		if (is_wp_error($resp)) {
-			add_settings_error('redeemable-codes-notices', 'redeemable-codes-notices', __('No codes generated.', $this->plugin_name), 'error');
+			add_settings_error('redeemable-codes-notices', 'redeemable-codes-notices', $resp->get_error_message(), 'error');
 			return;
 		}
 
@@ -501,7 +526,7 @@ class Redeemable_Codes_Admin
 	 *
 	 * @since    1.0.0
 	 */
-	private function generate_and_store_multiple_redeemable_codes($number_of_codes, $speedtale_id, $item, $expirationDateDays = NULL)
+	private function generate_and_store_multiple_redeemable_codes($number_of_codes, $speedtale_id, $item, $target_page, $expirationDateDays = NULL)
 	{
 		$codes = array();
 		$retries = 0;
@@ -513,7 +538,7 @@ class Redeemable_Codes_Admin
 				continue;
 			}
 
-			$resp = $this->store_redeemable_code($code, $speedtale_id, $item, $expirationDateDays, True);
+			$resp = $this->store_redeemable_code($code, $speedtale_id, $item, 0, $target_page, $expirationDateDays, True);
 			if (is_wp_error($resp)) {
 				$retries++;
 				continue;
@@ -616,7 +641,6 @@ class Redeemable_Codes_Admin
 			"SELECT * FROM $table_name WHERE 
 				code = %s 
 				AND speedtale_id = %s
-				AND is_valid = 1
 				AND expiration_date NOT NULL 
 				AND expiration_date > NOW()",
 			array($code, $speedtale_id)
@@ -636,12 +660,12 @@ class Redeemable_Codes_Admin
 	 */
 	private function add_rest_api_hooks()
 	{
-		register_rest_route('redeemable-codes/v1', '/codes/(?P<code>[a-zA-Z0-9-]+)/redeem', array(
+		register_rest_route('redeemable-codes/v1', '/codes/redeem', array(
 			'methods' => 'PATCH',
 			'callback' => array($this, 'redeem_redeemable_code_patch'),
 		));
 
-		register_rest_route('redeemable-codes/v1', '/codes/(?P<code>[a-zA-Z0-9-]+)/redeem', array(
+		register_rest_route('redeemable-codes/v1', '/codes/redeem', array(
 			'methods' => 'OPTIONS',
 			'callback' => array($this, 'rest_api_options'),
 		));
@@ -777,12 +801,14 @@ class Redeemable_Codes_Admin
 	 *
 	 * @since    1.0.0
 	 */
-	private function store_redeemable_code($code, $speedtale_id, $item, $expirationDateDays = NULL, $is_unique = False)
+	private function store_redeemable_code($code, $speedtale_id, $item = "", $score_offset = 0, $target_page = "", $expirationDateDays = NULL, $is_unique = False)
 	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
 
-		$expirationDate = $expirationDateDays ? date('Y-m-d H:i:s', strtotime("+$expirationDateDays days")) : NULL;
+		$item = !empty($item) ? $item : NULL;
+		$score_offset = $score_offset > 0 ? intval($score_offset) : NULL;
+		$expirationDate = !is_null($expirationDateDays) ? date('Y-m-d H:i:s', strtotime("+$expirationDateDays days")) : NULL;
 
 		$resp = $wpdb->insert(
 			$table_name,
@@ -790,12 +816,14 @@ class Redeemable_Codes_Admin
 				'code' => $code,
 				'speedtale_id' => $speedtale_id,
 				'item_to_redeem' => $item,
+				'score_offset' => $score_offset,
+				'target_page' => $target_page,
 				'created_at' => current_time('mysql'),
 				'expiration_date' => $expirationDate,
 				'is_valid' => 1,
 				'is_unique' => $is_unique ? 1 : 0,
 			),
-			array('%s', '%s', '%s', '%s', '%s', '%d', '%d')
+			array('%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d', '%d')
 		);
 
 		if (!$resp) {

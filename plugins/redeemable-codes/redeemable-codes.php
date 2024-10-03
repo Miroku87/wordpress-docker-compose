@@ -1,7 +1,7 @@
 <?php
 // define('WP_DEBUG', true);
 // define('WP_DEBUG_DISPLAY', true);
-// @ini_set('display_errors', 1);
+// @ini_set('display_errors', 0);
 
 /**
  * The plugin bootstrap file
