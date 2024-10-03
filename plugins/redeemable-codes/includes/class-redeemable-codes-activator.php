@@ -37,6 +37,7 @@ class Redeemable_Codes_Activator
 	public static function activate()
 	{
 		Redeemable_Codes_Activator::generate_redeemable_codes_table();
+		Redeemable_Codes_Activator::generate_redeemable_codes_redeemed_table();
 		Redeemable_Codes_Activator::generate_allowed_origins_table();
 	}
 
@@ -61,13 +62,35 @@ class Redeemable_Codes_Activator
 			target_page varchar(255) DEFAULT '',
 			created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 			expiration_date timestamp NULL DEFAULT NULL,
+			is_unique tinyint(1) DEFAULT 0 NOT NULL,
+			is_valid tinyint(1) DEFAULT 1 NOT NULL,
+			PRIMARY KEY  (id)
+		) $charset_collate;";
+		dbDelta($sql);
+	}
+
+	/**
+	 * Creates the redeemable codes redeemed_table.
+	 *
+	 * @since    1.0.0
+	 */
+	private static function generate_redeemable_codes_redeemed_table()
+	{
+		global $wpdb;
+		$table_name_redeemed = $wpdb->prefix . REDEEMABLE_CODE_REDEEMED_CODES_TABLE_NAME;
+		$table_name_all = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
+
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE $table_name_redeemed (
+			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			redeemed_id mediumint(9) NOT NULL,
 			redeemed_at timestamp DEFAULT NULL,
 			redeemed_by varchar(255) DEFAULT NULL,
 			redeemed_ip varchar(255) DEFAULT NULL,
 			redeemed_user_agent varchar(255) DEFAULT NULL,
-			is_unique tinyint(1) DEFAULT 0 NOT NULL,
-			is_valid tinyint(1) DEFAULT 1 NOT NULL,
-			PRIMARY KEY  (id)
+			PRIMARY KEY  (id),
+			FOREIGN KEY (redeemed_id) REFERENCES $table_name_all(id)
 		) $charset_collate;";
 		dbDelta($sql);
 	}

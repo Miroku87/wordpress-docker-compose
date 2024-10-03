@@ -152,7 +152,8 @@ class Redeemable_Codes_Admin
 		global $wpdb;
 		$inputCode = $data['code'];
 		$target_page = urldecode($data['target_page']);
-		$table_name = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
+		$table_name_all = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
+		$table_name_redeemed = $wpdb->prefix . REDEEMABLE_CODE_REDEEMED_CODES_TABLE_NAME;
 
 		$rate_limit = $this->check_rate_limit();
 		if (is_wp_error($rate_limit)) {
@@ -160,41 +161,48 @@ class Redeemable_Codes_Admin
 		}
 
 		$codeData = $wpdb->get_row($wpdb->prepare(
-			"SELECT * FROM $table_name WHERE code = %s AND target_page = %s AND is_valid = 1 AND ( expiration_date > NOW() OR expiration_date IS NULL )",
+			"SELECT * FROM $table_name_all WHERE code = %s AND target_page = %s AND ( expiration_date > NOW() OR expiration_date IS NULL )",
 			$inputCode,
 			$target_page
 		));
 
-		if ($codeData) {
-			$this->reset_rate_limit();
-
-			$is_valid = $codeData->is_unique ? 0 : 1;
-
-			$wpdb->update(
-				$table_name,
-				array(
-					'is_valid' => $is_valid,
-					'redeemed_at' => current_time('mysql'),
-					'redeemed_by' => $data['redeemer'],
-					'redeemed_ip' => $_SERVER['REMOTE_ADDR'],
-					'redeemed_user_agent' => $_SERVER['HTTP_USER_AGENT']
-				),
-				array('id' => $codeData->id, 'is_valid' => 1),
-				array('%d', '%s', '%s', '%s', '%s'),
-				array('%d', '%d')
-			);
-
-			$codeData = $wpdb->get_row($wpdb->prepare(
-				"SELECT * FROM $table_name WHERE code = %s",
-				$inputCode
-			));
-
-			return new WP_REST_Response($codeData, 200);
+		if(!$codeData) {
+			return new WP_Error('code_not_found', 'Code not found', array('status' => 404));
 		}
 
-		$this->increment_rate_limit();
+		$redeemData = $wpdb->get_results($wpdb->prepare(
+			"SELECT * FROM $table_name_redeemed WHERE redeemed_id = %d",
+			$codeData->id
+		));
 
-		return new WP_Error('code_not_found', 'Code not found', array('status' => 404));
+		if (count($redeemData) > 0 && $codeData->is_unique === "1") {
+			return new WP_Error('code_already_redeemed', 'Code can be redeemed just once', array('status' => 400));
+		}
+
+		$this->reset_rate_limit();
+
+		$resp = $wpdb->insert(
+			$table_name_redeemed,
+			array(
+				'redeemed_id' => intval($codeData->id),
+				'redeemed_at' => current_time('mysql'),
+				'redeemed_by' => $data['redeemer'],
+				'redeemed_ip' => $_SERVER['REMOTE_ADDR'],
+				'redeemed_user_agent' => $_SERVER['HTTP_USER_AGENT']
+			),
+			array('%d', '%s', '%s', '%s', '%s'),
+		);
+
+		$codeData = $wpdb->get_row($wpdb->prepare(
+			"SELECT * FROM $table_name_all WHERE code = %s",
+			$inputCode
+		));
+
+		$codeData->score_offset = intval($codeData->score_offset);
+		$codeData->is_valid = $codeData->is_valid === "1" ? true : false;
+		$codeData->is_unique = $codeData->is_unique === "1" ? true : false;
+
+		return new WP_REST_Response($codeData, 200);
 	}
 
 	/**
@@ -633,7 +641,6 @@ class Redeemable_Codes_Admin
 			"SELECT * FROM $table_name WHERE 
 				code = %s 
 				AND speedtale_id = %s
-				AND is_valid = 1
 				AND expiration_date NOT NULL 
 				AND expiration_date > NOW()",
 			array($code, $speedtale_id)
