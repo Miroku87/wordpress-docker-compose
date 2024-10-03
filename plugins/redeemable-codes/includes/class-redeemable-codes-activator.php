@@ -60,7 +60,7 @@ class Redeemable_Codes_Activator
 			score_offset int DEFAULT 0,
 			target_page varchar(255) DEFAULT '',
 			created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-			expiration_date timestamp DEFAULT NULL,
+			expiration_date timestamp NULL DEFAULT NULL,
 			redeemed_at timestamp DEFAULT NULL,
 			redeemed_by varchar(255) DEFAULT NULL,
 			redeemed_ip varchar(255) DEFAULT NULL,

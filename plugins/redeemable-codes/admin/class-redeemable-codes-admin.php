@@ -151,7 +151,7 @@ class Redeemable_Codes_Admin
 	{
 		global $wpdb;
 		$inputCode = $data['code'];
-		$target_page = $data['target_page'];
+		$target_page = urldecode($data['target_page']);
 		$table_name = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
 
 		$rate_limit = $this->check_rate_limit();
@@ -160,7 +160,7 @@ class Redeemable_Codes_Admin
 		}
 
 		$codeData = $wpdb->get_row($wpdb->prepare(
-			"SELECT * FROM $table_name WHERE code = %s AND target_page = %s AND is_valid = 1 AND expiration_date > NOW()",
+			"SELECT * FROM $table_name WHERE code = %s AND target_page = %s AND is_valid = 1 AND ( expiration_date > NOW() OR expiration_date IS NULL )",
 			$inputCode,
 			$target_page
 		));
@@ -801,7 +801,7 @@ class Redeemable_Codes_Admin
 
 		$item = !empty($item) ? $item : NULL;
 		$score_offset = $score_offset > 0 ? intval($score_offset) : NULL;
-		$expirationDate = $expirationDateDays ? date('Y-m-d H:i:s', strtotime("+$expirationDateDays days")) : NULL;
+		$expirationDate = !is_null($expirationDateDays) ? date('Y-m-d H:i:s', strtotime("+$expirationDateDays days")) : NULL;
 
 		$resp = $wpdb->insert(
 			$table_name,
