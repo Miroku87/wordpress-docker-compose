@@ -90,7 +90,7 @@ class Redeemable_Codes_Activator
 			redeemed_ip varchar(255) DEFAULT NULL,
 			redeemed_user_agent varchar(255) DEFAULT NULL,
 			PRIMARY KEY  (id),
-			FOREIGN KEY (redeemed_id) REFERENCES $table_name_all(id)
+			FOREIGN KEY (redeemed_id) REFERENCES $table_name_all(id) ON DELETE NO ACTION ON UPDATE CASCADE
 		) $charset_collate;";
 		dbDelta($sql);
 	}
