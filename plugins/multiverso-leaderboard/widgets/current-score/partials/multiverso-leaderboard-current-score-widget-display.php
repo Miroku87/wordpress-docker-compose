@@ -21,8 +21,8 @@ require_once plugin_dir_path(__FILE__) . '../../../includes/multiverso-leaderboa
 global $wpdb;
 $table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
-$entry_id = !empty( $_POST['entry_id'] ) ? $_POST['entry_id'] : 0;
-$entry_id = $entry_id <= 0 && !empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id'] : 0;
+$entry_id = !empty( $_GET['entry_id'] ) ? intval($_GET['entry_id']) : 0;
+$entry_id = $entry_id <= 0 && !empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id'] : $entry_id;
 
 if (empty($entry_id)) {
     esc_html_e('Nessun risultato da visualizzare', $this->plugin_name);
@@ -51,15 +51,12 @@ $seconds = $results->elapsed_time_seconds % 60;
     <h2><?php echo $widget_args['before_title'] . apply_filters( 'widget_title', $widget_instance['title'] ) . $widget_args['after_title']; ?></h2>
 <?php endif ?>
 
-<h2><?php esc_html_e('Risultato Ottenuto', $this->plugin_name); ?></h2>
-<p>
-    <?php printf(__('Hai accumulato %s punti.', $this->plugin_name), $results->total_score); ?> <br>
-    <?php printf(__('In %d minuti e %d secondi.', $this->plugin_name), $minutes, $seconds); ?> <br>
-    <?php printf(__('Hai trovato %d cristalli, di cui %d nascosti.', $this->plugin_name), $results->crystals_num, $results->hidden_crystals_num); ?> <br>
-    <?php printf(__('Hai completato %d missioni secondarie.', $this->plugin_name), $results->side_missions); ?> <br>
-    <?php if ($results->time_bonus > 0) : ?>
-        <?php printf(__('Visto che hai completato il gioco prima del tempo previsto hai ricevuto %d punti bonus.', $this->plugin_name), $results->time_bonus); ?>
-    <?php endif; ?>
+<p class="lb-summary">
+    Hai accumulato <span><?php echo $results->total_score; ?></span> punti totali:<br><br>
+    Hai trovato <span><?php echo $results->crystals_num; ?></span> cristalli su <span>12</span><br><br>
+    Hai trovato <span><?php echo $results->hidden_crystals_num; ?></span> cristalli nascosti su <span>31</span><br><br>
+    Hai completato <span><?php echo $results->side_missions_num; ?></span> missioni secondarie su <span>4</span>. <br><br>
+    Hai sbagliato <span><?php echo $results->errors_num; ?></span> volte. <br><br>
 </p>
 
 <?php echo $widget_args['after_widget']; ?>

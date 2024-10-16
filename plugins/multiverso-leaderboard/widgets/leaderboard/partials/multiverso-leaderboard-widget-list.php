@@ -21,11 +21,11 @@ require_once plugin_dir_path(__FILE__) . '../../../includes/multiverso-leaderboa
 global $wpdb;
 $table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
-$entry_id = !empty( $_POST['entry_id'] ) ? $_POST['entry_id'] : 0;
-$entry_id = $entry_id <= 0 && !empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id'] : 0;
+$entry_id = !empty( $_GET['entry_id'] ) ? intval($_GET['entry_id']) : 0;
+$entry_id = $entry_id <= 0 && !empty( $widget_instance['entry_id'] ) ? $widget_instance['entry_id'] : $entry_id;
 
-$speedtale_id = !empty( $_POST['speedtale_id'] ) ? $_POST['speedtale_id'] : '';
-$speedtale_id = empty( $speedtale_id ) && !empty( $widget_instance['speedtale_id'] ) ? $widget_instance['speedtale_id'] : '';
+$speedtale_id = !empty( $_GET['speedtale_id'] ) ? $_GET['speedtale_id'] : '';
+$speedtale_id = empty( $speedtale_id ) && !empty( $widget_instance['speedtale_id'] ) ? $widget_instance['speedtale_id'] : $speedtale_id;
 
 $timeframe = ! empty( $widget_instance['timeframe'] ) ? $widget_instance['timeframe'] : 'complete';
 
@@ -73,10 +73,10 @@ if ( $timeframe === 'today' ) {
                 <?php $seconds = $lb->elapsed_time_seconds % 60; ?>
                 <?php $date = date('d/m/Y', strtotime($lb->created_at)); ?>
                 <tr <?php if ($lb->id == $entry_id) : ?> class="current-score" <?php endif; ?>>
-                    <td><?php echo $lb->group_name; ?></td>
+                    <td><?php echo urldecode($lb->group_name); ?></td>
                     <td><?php echo $lb->total_score; ?></td>
-                    <td><?php echo $lb->class_name; ?></td>
-                    <td><?php echo $lb->school_name; ?></td>
+                    <td><?php echo urldecode($lb->class_name); ?></td>
+                    <td><?php echo urldecode($lb->school_name); ?></td>
                     <td><?php printf(__('%d minuti e %d secondi', $this->plugin_name), $minutes, $seconds); ?></td>
                     <td><?php echo $date; ?></td>
                 </tr>

@@ -64,7 +64,8 @@ class Multiverso_Leaderboard_Activator
 			time_bonus int DEFAULT NULL,
 			crystals_num int DEFAULT NULL,
 			hidden_crystals_num int DEFAULT NULL,
-			side_missions int DEFAULT NULL,
+			side_missions_num int DEFAULT NULL,
+			errors_num int DEFAULT NULL,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 		dbDelta($sql);

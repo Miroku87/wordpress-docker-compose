@@ -205,7 +205,8 @@ class Multiverso_Leaderboard_Admin
 				'elapsed_time_seconds' => $data['elapsed_time_seconds'],
 				'time_bonus' => $data['time_bonus'],
 				'crystals_num' => $data['crystals_num'],
-				'side_missions' => $data['side_missions'],
+				'side_missions_num' => $data['side_missions_num'],
+				'errors_num' => $data['errors_num'],
 			),
 			array('%s', '%s', '%s', '%s', '%s', '%d', '%d'),
 		);

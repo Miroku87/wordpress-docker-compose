@@ -150,7 +150,7 @@ class Redeemable_Codes_Admin
 	public function redeem_redeemable_code_patch($data)
 	{
 		global $wpdb;
-		$inputCode = $data['code'];
+		$input_code = $data['code'];
 		$target_page = urldecode($data['target_page']);
 		$table_name_all = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
 		$table_name_redeemed = $wpdb->prefix . REDEEMABLE_CODE_REDEEMED_CODES_TABLE_NAME;
@@ -161,22 +161,35 @@ class Redeemable_Codes_Admin
 		}
 
 		$codeData = $wpdb->get_row($wpdb->prepare(
-			"SELECT * FROM $table_name_all WHERE code = %s AND target_page = %s AND ( expiration_date > NOW() OR expiration_date IS NULL )",
-			$inputCode,
+			"SELECT * FROM $table_name_all
+				WHERE code = %s AND 
+					target_page = %s AND 
+					( expiration_date > NOW() OR expiration_date IS NULL )",
+			$input_code,
 			$target_page
 		));
 
 		if(!$codeData) {
-			return new WP_Error('code_not_found', 'Code not found', array('status' => 404));
+			return new WP_Error('code_not_found', "Codice '$input_code' non trovato.", array('status' => 404));
 		}
 
 		$redeemData = $wpdb->get_results($wpdb->prepare(
 			"SELECT * FROM $table_name_redeemed WHERE redeemed_id = %d",
 			$codeData->id
 		));
-
+		
 		if (count($redeemData) > 0 && $codeData->is_unique === "1") {
-			return new WP_Error('code_already_redeemed', 'Code can be redeemed just once', array('status' => 400));
+			return new WP_Error('code_already_redeemed', 'Il codice può essere usato solo una volta.', array('status' => 400));
+		}
+
+		$redeemData = $wpdb->get_results($wpdb->prepare(
+			"SELECT * FROM $table_name_redeemed WHERE redeemed_id = %d AND redeemed_by = %s",
+			$codeData->id,
+			$data['redeemer']
+		));
+
+		if (count($redeemData) > 0) {
+			return new WP_Error('code_already_redeemed', 'Il codice può essere usato solo una volta dallo stesso gruppo.', array('status' => 400));
 		}
 
 		$this->reset_rate_limit();
@@ -195,7 +208,7 @@ class Redeemable_Codes_Admin
 
 		$codeData = $wpdb->get_row($wpdb->prepare(
 			"SELECT * FROM $table_name_all WHERE code = %s",
-			$inputCode
+			$input_code
 		));
 
 		$codeData->score_offset = intval($codeData->score_offset);
