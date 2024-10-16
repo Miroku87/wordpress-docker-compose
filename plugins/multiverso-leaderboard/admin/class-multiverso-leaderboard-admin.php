@@ -180,10 +180,9 @@ class Multiverso_Leaderboard_Admin
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_leaderboard_entry($data)
+	public function post_leaderboard_entry($data)
 	{
 		global $wpdb;
-		$entry = $data['entry'];
 		$table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
 
 		$rate_limit = $this->check_rate_limit();
@@ -201,25 +200,107 @@ class Multiverso_Leaderboard_Admin
 				'group_name' => $data['group_name'],
 				'speedtale_id' => $data['speedtale_id'],
 				'created_at' => date('Y-m-d H:i:s'),
+			),
+			array('%s', '%s', '%s', '%s', '%s'),
+		);
+
+		if (!$resp) {
+			return new WP_Error('post_leaderboard_entry_error', $wpdb->last_error);
+		}
+
+		$id = $wpdb->insert_id;
+
+		$this->increment_rate_limit();
+		
+		$resp = $wpdb->get_row($wpdb->prepare(
+			"SELECT * FROM $table_name WHERE id = %d",
+			$id
+		));
+
+		return new WP_REST_Response($resp, 200);
+	}
+
+	/**
+	 * Function to modify leaderboard entry.
+	 *
+	 * @since    1.0.0
+	 */
+	public function patch_leaderboard_entry($data)
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
+
+		$rate_limit = $this->check_rate_limit();
+		if (is_wp_error($rate_limit)) {
+			return $rate_limit;
+		}
+
+		$this->reset_rate_limit();
+
+		$resp = $wpdb->update(
+			$table_name,
+			array(
+				'created_at' => date('Y-m-d H:i:s'),
 				'total_score' => $data['total_score'],
 				'elapsed_time_seconds' => $data['elapsed_time_seconds'],
 				'time_bonus' => $data['time_bonus'],
 				'crystals_num' => $data['crystals_num'],
+				'hidden_crystals_num' => $data['hidden_crystals_num'],
 				'side_missions_num' => $data['side_missions_num'],
 				'errors_num' => $data['errors_num'],
 			),
-			array('%s', '%s', '%s', '%s', '%s', '%d', '%d'),
+			array(
+				'id' => $data['entry_id'],
+			)
 		);
 
 		if (!$resp) {
-			return new WP_Error('add_leaderboard_entry_error', $wpdb->last_error);
+			return new WP_Error('patch_leaderboard_entry_error', $wpdb->last_error);
 		}
 
-		$insert_id = $wpdb->insert_id;
+		$this->increment_rate_limit();
+		
+		$resp = $wpdb->get_row($wpdb->prepare(
+			"SELECT * FROM $table_name WHERE id = %d",
+			$data['entry_id']
+		));
+
+		return new WP_REST_Response($resp, 200);
+	}
+
+	/**
+	 * Function to get leaderboard entry.
+	 *
+	 * @since    1.0.0
+	 */
+	public function get_leaderboard_entry($data)
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
+		
+		$rate_limit = $this->check_rate_limit();
+		if (is_wp_error($rate_limit)) {
+			return $rate_limit;
+		}
+		
+		$this->reset_rate_limit();
+		
+		$resp = $wpdb->get_row($wpdb->prepare(
+			"SELECT * FROM $table_name WHERE speedtale_id = %s AND group_name = %s",
+			$data['speedtale_id'], $data['group_name']
+		));
+
+		if (is_wp_error($resp)) {
+			return new WP_Error('get_leaderboard_entry_error',$resp->get_error_message());
+		}
+
+		if (!$resp) {
+			return new WP_REST_Response(null, 404);
+		}
 
 		$this->increment_rate_limit();
 
-		return new WP_REST_Response(array("id"=>$insert_id), 200);
+		return new WP_REST_Response($resp, 200);
 	}
 
 	/**
@@ -383,7 +464,17 @@ class Multiverso_Leaderboard_Admin
 
 		register_rest_route('multiverso-leaderboard/v1', '/entry', array(
 			'methods' => 'POST',
-			'callback' => array($this, 'add_leaderboard_entry'),
+			'callback' => array($this, 'post_leaderboard_entry'),
+		));
+
+		register_rest_route('multiverso-leaderboard/v1', '/entry/(?P<entry_id>\d+)', array(
+			'methods' => 'PATCH',
+			'callback' => array($this, 'patch_leaderboard_entry'),
+		));
+
+		register_rest_route('multiverso-leaderboard/v1', '/entry/(?P<speedtale_id>\S+)/(?P<group_name>\S+)', array(
+			'methods' => 'GET',
+			'callback' => array($this, 'get_leaderboard_entry'),
 		));
 
 		register_rest_route('multiverso-leaderboard/v1', '/entry', array(

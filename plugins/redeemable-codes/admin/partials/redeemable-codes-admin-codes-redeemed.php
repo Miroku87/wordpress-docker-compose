@@ -39,12 +39,11 @@ $redeemed_codes = $wpdb->get_results("SELECT * FROM $table_name_redeemed r
                 <th scope="col"><?php esc_html_e('Speedtale ID', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Item to Redeem', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Score Offset', $this->plugin_name); ?></th>
+                <th scope="col"><?php esc_html_e('Target Page', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Expiration Date', $this->plugin_name); ?></th>
-                <th scope="col"><?php esc_html_e('Created At', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Redeemed At', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Redeemed By', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Redeemed IP', $this->plugin_name); ?></th>
-                <th scope="col"><?php esc_html_e('Redeemed User Agent', $this->plugin_name); ?></th>
             </tr>
         </thead>
         <tbody>
@@ -55,12 +54,11 @@ $redeemed_codes = $wpdb->get_results("SELECT * FROM $table_name_redeemed r
                     <td><?php echo $code->speedtale_id; ?></td>
                     <td><?php echo $code->item_to_redeem; ?></td>
                     <td><?php echo $code->score_offset; ?></td>
+                    <td><?php echo $code->target_page; ?></td>
                     <td><?php echo $code->expiration_date; ?></td>
-                    <td><?php echo $code->created_at; ?></td>
                     <td><?php echo $code->redeemed_at; ?></td>
                     <td><?php echo $code->redeemed_by; ?></td>
                     <td><?php echo $code->redeemed_ip; ?></td>
-                    <td><?php echo $code->redeemed_user_agent; ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

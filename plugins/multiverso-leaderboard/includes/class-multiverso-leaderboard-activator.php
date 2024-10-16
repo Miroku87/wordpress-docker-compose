@@ -54,19 +54,20 @@ class Multiverso_Leaderboard_Activator
 
 		$sql = "CREATE TABLE $table_name (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
-			school_name varchar(255) DEFAULT '' NOT NULL,
-			class_name varchar(255) DEFAULT '' NOT NULL,
-			group_name varchar(255) DEFAULT '' NOT NULL,
+			school_name varchar(255) NOT NULL,
+			class_name varchar(255) NOT NULL,
+			group_name varchar(255) NOT NULL,
 			speedtale_id varchar(255) NOT NULL,
 			created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-			elapsed_time_seconds int DEFAULT NULL,			
-			total_score int DEFAULT NULL,
-			time_bonus int DEFAULT NULL,
-			crystals_num int DEFAULT NULL,
-			hidden_crystals_num int DEFAULT NULL,
-			side_missions_num int DEFAULT NULL,
-			errors_num int DEFAULT NULL,
-			PRIMARY KEY  (id)
+			elapsed_time_seconds int DEFAULT 0 NOT NULL,
+			total_score int DEFAULT 0 NOT NULL,
+			time_bonus int DEFAULT 0 NOT NULL,
+			crystals_num int DEFAULT 0 NOT NULL,
+			hidden_crystals_num int DEFAULT 0 NOT NULL,
+			side_missions_num int DEFAULT 0 NOT NULL,
+			errors_num int DEFAULT 0 NOT NULL,
+			PRIMARY KEY  (id),
+			CONSTRAINT st_gruppo UNIQUE (group_name,speedtale_id)
 		) $charset_collate;";
 		dbDelta($sql);
 	}

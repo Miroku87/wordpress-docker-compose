@@ -31,12 +31,12 @@ $timeframe = ! empty( $widget_instance['timeframe'] ) ? $widget_instance['timefr
 
 if ( $timeframe === 'today' ) {
     $leaderboard =  $wpdb->get_results($wpdb->prepare(
-        "SELECT * FROM $table_name WHERE DATE(created_at) = CURDATE() AND speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
+        "SELECT * FROM $table_name WHERE DATE(created_at) = CURDATE() AND elapsed_time_seconds > 0 AND speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
         $speedtale_id
     ));
 } else {
     $leaderboard =  $wpdb->get_results($wpdb->prepare(
-        "SELECT * FROM $table_name WHERE speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
+        "SELECT * FROM $table_name WHERE elapsed_time_seconds > 0 AND speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
         $speedtale_id
     ));
 }

@@ -52,10 +52,10 @@ $leaderboard = $wpdb->get_results("SELECT * FROM $table_name ORDER BY id DESC");
                 <?php $seconds = $lb->elapsed_time_seconds % 60; ?>
                 <tr>
                     <td><?php echo $lb->id; ?></td>
-                    <td><?php echo $lb->school_name; ?></td>
-                    <td><?php echo $lb->class_name; ?></td>
-                    <td><?php echo $lb->group_name; ?></td>
-                    <td><?php echo $lb->speedtale_id; ?></td>
+                    <td><?php echo urldecode($lb->school_name); ?></td>
+                    <td><?php echo urldecode($lb->class_name); ?></td>
+                    <td><?php echo urldecode($lb->group_name); ?></td>
+                    <td><?php echo urldecode($lb->speedtale_id); ?></td>
                     <td><?php echo $lb->created_at; ?></td>
                     <td><?php echo $lb->total_score; ?></td>
                     <td><?php printf(__('%d minuti e %d secondi', $this->plugin_name), $minutes, $seconds); ?></td>
