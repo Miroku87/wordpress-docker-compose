@@ -59,6 +59,7 @@ class Multiverso_Leaderboard_Activator
 			group_name varchar(255) NOT NULL,
 			speedtale_id varchar(255) NOT NULL,
 			created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+			updated_at timestamp NULL DEFAULT NULL,
 			elapsed_time_seconds int DEFAULT 0 NOT NULL,
 			total_score int DEFAULT 0 NOT NULL,
 			time_bonus int DEFAULT 0 NOT NULL,

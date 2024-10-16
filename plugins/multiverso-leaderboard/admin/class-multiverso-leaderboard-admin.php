@@ -240,7 +240,7 @@ class Multiverso_Leaderboard_Admin
 		$resp = $wpdb->update(
 			$table_name,
 			array(
-				'created_at' => date('Y-m-d H:i:s'),
+				'updated_at' => date('Y-m-d H:i:s'),
 				'total_score' => $data['total_score'],
 				'elapsed_time_seconds' => $data['elapsed_time_seconds'],
 				'time_bonus' => $data['time_bonus'],

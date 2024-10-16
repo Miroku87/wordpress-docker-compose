@@ -31,12 +31,12 @@ $timeframe = ! empty( $widget_instance['timeframe'] ) ? $widget_instance['timefr
 
 if ( $timeframe === 'today' ) {
     $leaderboard =  $wpdb->get_results($wpdb->prepare(
-        "SELECT * FROM $table_name WHERE DATE(created_at) = CURDATE() AND elapsed_time_seconds > 0 AND speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
+        "SELECT * FROM $table_name WHERE DATE(updated_at) = CURDATE() AND elapsed_time_seconds > 0 AND speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
         $speedtale_id
     ));
 } else {
     $leaderboard =  $wpdb->get_results($wpdb->prepare(
-        "SELECT * FROM $table_name WHERE elapsed_time_seconds > 0 AND speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
+        "SELECT * FROM $table_name WHERE updated_at IS NOT NULL AND speedtale_id = %s ORDER BY total_score DESC, elapsed_time_seconds DESC",
         $speedtale_id
     ));
 }
@@ -71,7 +71,7 @@ if ( $timeframe === 'today' ) {
             foreach ($leaderboard as $lb) : ?>
                 <?php $minutes = floor($lb->elapsed_time_seconds / 60); ?>
                 <?php $seconds = $lb->elapsed_time_seconds % 60; ?>
-                <?php $date = date('d/m/Y', strtotime($lb->created_at)); ?>
+                <?php $date = date('d/m/Y', strtotime($lb->updated_at)); ?>
                 <tr <?php if ($lb->id == $entry_id) : ?> class="current-score" <?php endif; ?>>
                     <td><?php echo urldecode($lb->group_name); ?></td>
                     <td><?php echo $lb->total_score; ?></td>

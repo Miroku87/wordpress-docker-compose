@@ -40,6 +40,7 @@ $leaderboard = $wpdb->get_results("SELECT * FROM $table_name ORDER BY id DESC");
                 <th scope="col"><?php esc_html_e('Gruppo', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Speedtale', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Data Creazione', $this->plugin_name); ?></th>
+                <th scope="col"><?php esc_html_e('Data Aggiornamento', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Punteggio Totale', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Tempo Trascorso', $this->plugin_name); ?></th>
                 <th scope="col"><?php esc_html_e('Actions', $this->plugin_name); ?></th>
@@ -57,6 +58,7 @@ $leaderboard = $wpdb->get_results("SELECT * FROM $table_name ORDER BY id DESC");
                     <td><?php echo urldecode($lb->group_name); ?></td>
                     <td><?php echo urldecode($lb->speedtale_id); ?></td>
                     <td><?php echo $lb->created_at; ?></td>
+                    <td><?php echo $lb->updated_at; ?></td>
                     <td><?php echo $lb->total_score; ?></td>
                     <td><?php printf(__('%d minuti e %d secondi', $this->plugin_name), $minutes, $seconds); ?></td>
                     <td class="actions">
