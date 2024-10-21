@@ -192,6 +192,14 @@ class Multiverso_Leaderboard_Admin
 
 		$this->reset_rate_limit();
 
+		if (empty($data['group_name']) || empty($data['school_name']) || empty($data['class_name']) || empty($data['speedtale_id'])) {
+			return new WP_Error(
+				'post_leaderboard_entry_error', 
+				'Il nome della speedtale, scuola, classe e gruppo sono obbligatori.', 
+				array('status' => 400)
+			);
+		}
+
 		$resp = $wpdb->insert(
 			$table_name,
 			array(

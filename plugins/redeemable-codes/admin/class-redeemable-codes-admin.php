@@ -108,6 +108,7 @@ class Redeemable_Codes_Admin
 	{
 		$this->handle_codes_form_submission();
 		$this->handle_code_delete_request();
+		$this->handle_redeemed_code_delete_request();
 		$this->handle_origin_form_submission();
 		$this->handle_origin_delete_request();
 	}
@@ -423,7 +424,7 @@ class Redeemable_Codes_Admin
 	}
 
 	/**
-	 * Handle the a CORS origin delete request.
+	 * Handle the an active code delete request.
 	 *
 	 * @since    1.0.0
 	 */
@@ -448,6 +449,41 @@ class Redeemable_Codes_Admin
 		}
 
 		$ok = $this->delete_redeemable_code($code_id);
+
+		if (is_wp_error($ok)) {
+			add_settings_error('redeemable-codes-notices', 'redeemable-codes-notices', $ok->get_error_message(), 'error');
+			return;
+		}
+
+		add_settings_error('redeemable-codes-notices', 'redeemable-codes-notices', __('Code deleted.', $this->plugin_name), 'updated');
+	}
+
+	/**
+	 * Handle the a redeemed code delete request.
+	 *
+	 * @since    1.0.0
+	 */
+	private function handle_redeemed_code_delete_request()
+	{
+		if (!isset($_POST['action']) || !isset($_POST['code_id']))
+			return;
+
+		if ($_POST['action'] != 'delete-redeemed')
+			return;
+
+		if (!check_admin_referer('redeemable_codes_generate_action', 'redeemable_codes_nonce_field'))
+			wp_die(__('You cannot access this page.', $this->plugin_name));
+
+		if (!current_user_can('manage_options'))
+			wp_die(__('You do not have sufficient permissions to access this page.', $this->plugin_name));
+
+		$code_id = intval($_POST['code_id']);
+
+		if ($code_id <= 0) {
+			add_settings_error('redeemable-codes-notices', 'redeemable-codes-notices', __('Invalid code ID.', $this->plugin_name), 'error');
+		}
+
+		$ok = $this->delete_redeemed_code($code_id);
 
 		if (is_wp_error($ok)) {
 			add_settings_error('redeemable-codes-notices', 'redeemable-codes-notices', $ok->get_error_message(), 'error');
@@ -847,7 +883,7 @@ class Redeemable_Codes_Admin
 	}
 
 	/**
-	 * Function to store the generated code in the database.
+	 * Function to delete an active code.
 	 *
 	 * @since    1.0.0
 	 */
@@ -855,6 +891,28 @@ class Redeemable_Codes_Admin
 	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . REDEEMABLE_CODE_CODES_TABLE_NAME;
+		$resp = $wpdb->delete(
+			$table_name,
+			array('id' => $code_id),
+			array('%d'),
+		);
+
+		if (!$resp) {
+			return new WP_Error('delete_redeemable_code_error', $wpdb->last_error);
+		}
+
+		return True;
+	}
+
+	/**
+	 * Function to delete a redeemed code
+	 *
+	 * @since    1.0.0
+	 */
+	private function delete_redeemed_code($code_id)
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . REDEEMABLE_CODE_REDEEMED_CODES_TABLE_NAME;
 		$resp = $wpdb->delete(
 			$table_name,
 			array('id' => $code_id),
