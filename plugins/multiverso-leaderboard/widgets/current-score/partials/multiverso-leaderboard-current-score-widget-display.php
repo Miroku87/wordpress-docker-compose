@@ -53,9 +53,8 @@ $seconds = $results->elapsed_time_seconds % 60;
 
 <p class="lb-summary">
     Hai accumulato <span><?php echo $results->total_score; ?></span> punti totali:<br><br>
-    Hai trovato <span><?php echo $results->crystals_num; ?></span> cristalli su <span>12</span><br><br>
-    Hai trovato <span><?php echo $results->hidden_crystals_num; ?></span> cristalli nascosti su <span>31</span><br><br>
-    Hai completato <span><?php echo $results->side_missions_num; ?></span> missioni secondarie su <span>4</span>. <br><br>
+    Hai trovato <span><?php echo $results->crystals_num; ?></span> cristalli su <span>14</span><br><br>
+    Hai trovato <span><?php echo $results->hidden_crystals_num; ?></span> cristalli nascosti su <span>30</span><br><br>
     Hai sbagliato <span><?php echo $results->errors_num; ?></span> volte. <br><br>
 </p>
 
