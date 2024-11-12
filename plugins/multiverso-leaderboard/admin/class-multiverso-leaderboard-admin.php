@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -194,8 +195,8 @@ class Multiverso_Leaderboard_Admin
 
 		if (empty($data['group_name']) || empty($data['school_name']) || empty($data['class_name']) || empty($data['speedtale_id'])) {
 			return new WP_Error(
-				'post_leaderboard_entry_error', 
-				'Il nome della speedtale, scuola, classe e gruppo sono obbligatori.', 
+				'post_leaderboard_entry_error',
+				'Il nome della speedtale, scuola, classe e gruppo sono obbligatori.',
 				array('status' => 400)
 			);
 		}
@@ -219,7 +220,7 @@ class Multiverso_Leaderboard_Admin
 		$id = $wpdb->insert_id;
 
 		$this->increment_rate_limit();
-		
+
 		$resp = $wpdb->get_row($wpdb->prepare(
 			"SELECT * FROM $table_name WHERE id = %d",
 			$id
@@ -267,7 +268,7 @@ class Multiverso_Leaderboard_Admin
 		}
 
 		$this->increment_rate_limit();
-		
+
 		$resp = $wpdb->get_row($wpdb->prepare(
 			"SELECT * FROM $table_name WHERE id = %d",
 			$data['entry_id']
@@ -285,21 +286,22 @@ class Multiverso_Leaderboard_Admin
 	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . MULTIVERSO_LB_LEADERBOARD_TABLE_NAME;
-		
+
 		$rate_limit = $this->check_rate_limit();
 		if (is_wp_error($rate_limit)) {
 			return $rate_limit;
 		}
-		
+
 		$this->reset_rate_limit();
-		
+
 		$resp = $wpdb->get_row($wpdb->prepare(
 			"SELECT * FROM $table_name WHERE speedtale_id = %s AND group_name = %s",
-			$data['speedtale_id'], $data['group_name']
+			$data['speedtale_id'],
+			$data['group_name']
 		));
 
 		if (is_wp_error($resp)) {
-			return new WP_Error('get_leaderboard_entry_error',$resp->get_error_message());
+			return new WP_Error('get_leaderboard_entry_error', $resp->get_error_message());
 		}
 
 		if (!$resp) {

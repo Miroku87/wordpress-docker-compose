@@ -5,6 +5,7 @@ const DEF_SORT_DIRECTION = "asc";
 const DEF_SHOW_PAGINATION = true;
 const DEF_SHOW_FILTER = true;
 const MAX_PAGE_TO_SHOW = 3;
+const TIME_FIELD_PATTERN = /(\d+) minuti e (\d+) secondi/;
 
 export default class VanillaDataTable {
     constructor(element, options = {}) {
@@ -33,6 +34,14 @@ export default class VanillaDataTable {
         this.element.classList.add("vdt");
 
         this.fields = this.#getFields();
+
+        const def_order = this.#getDefaultOrderByFields();
+        this.options.sort_by_field_ids = def_order.order_by_fields_id;
+        this.options.sort_directions = def_order.order_by_fields_directions;
+
+        this.current_sort_field_ids = [...this.options.sort_by_field_ids];
+        this.current_sort_directions = [...this.options.sort_directions];
+
         this.data = this.#getData();
         this.filtered_data = [...this.data];
 
@@ -49,19 +58,49 @@ export default class VanillaDataTable {
         }
     };
 
+    #getDefaultOrderByFields = () => {
+        if (!this.element.dataset.defaultOrderBy)
+            return {
+                order_by_fields_id: [DEF_SORT_BY_FIELD_ID],
+                order_by_fields_directions: [DEF_SORT_DIRECTION]
+            };
+
+        const order_by_fields = this.element.dataset.defaultOrderBy.split(",");
+        let order_by_fields_id = [];
+        let order_by_fields_directions = [];
+
+        order_by_fields.forEach(f => {
+            let f_name = f.split(":")[0];
+            let f_direction = f.split(":")[1];
+
+            let field_id = this.fields.findIndex(field => field.name === f_name);
+            if (field_id !== -1 && !order_by_fields_id.includes(field_id)) {
+                order_by_fields_id.push(field_id);
+                order_by_fields_directions.push(f_direction);
+            }
+        })
+
+        if (order_by_fields_id.length === 0) {
+            order_by_fields_id.push(DEF_SORT_BY_FIELD_ID);
+            order_by_fields_directions.push(DEF_SORT_DIRECTION);
+        }
+
+        return { order_by_fields_id, order_by_fields_directions };
+    }
+
     #getFields = () => {
         let fields = [];
 
         this.element.querySelectorAll("thead > tr > th").forEach((e, i) => {
-            let name = e.innerText;
+            let text = e.innerText;
             e.innerText = "";
 
-            let name_btn = document.createElement("button");
-            name_btn.classList.add("vdt-name");
-            name_btn.innerText = name;
-            e.appendChild(name_btn);
+            let text_btn = document.createElement("button");
+            text_btn.classList.add("vdt-name");
+            text_btn.innerText = text;
+            e.appendChild(text_btn);
 
-            name_btn.addEventListener("click", this.#onFieldNameClick(i));
+            text_btn.addEventListener("click", this.#onFieldNameClick(i));
 
             let arrows_div = document.createElement("div");
             arrows_div.classList.add("vdt-arrows");
@@ -81,8 +120,16 @@ export default class VanillaDataTable {
             arrow_down.innerText = "▼";
             arrows_div.appendChild(arrow_down);
 
+            const first_data = this.element.querySelector(`tbody > tr:first-of-type > td:nth-of-type(${i + 1})`).innerText;
+
+            let field_type = "text";
+            if (TIME_FIELD_PATTERN.test(first_data)) field_type = "time";
+            else if (/^\d+$/.test(first_data)) field_type = "number";
+
             fields.push({
-                name: name,
+                name: e.dataset.fieldName,
+                text: text,
+                type: field_type,
                 element: e
             });
         });
@@ -121,7 +168,24 @@ export default class VanillaDataTable {
         const sorted_data = this.filtered_data.sort((a, b) => {
             return field_ids.map((id, i) => {
                 const field = this.fields[id];
-                return test(a[field.name].data, b[field.name].data, i)
+                let a_value = a[field.name].data;
+                let b_value = b[field.name].data;
+
+                switch (field.type) {
+                    case "time":
+                        const time_field_matches_a = TIME_FIELD_PATTERN.exec(a_value);
+                        const time_field_matches_b = TIME_FIELD_PATTERN.exec(b_value);
+
+                        a_value = parseInt(time_field_matches_a[1]) * 60 + parseInt(time_field_matches_a[2], 10);
+                        b_value = parseInt(time_field_matches_b[1]) * 60 + parseInt(time_field_matches_b[2], 10);
+                        break;
+                    case "number":
+                        a_value = parseInt(a_value, 10);
+                        b_value = parseInt(b_value, 10);
+                        break;
+                }
+
+                return test(a_value, b_value, i)
             }).filter(item => item !== 0)[0];
         });
 
