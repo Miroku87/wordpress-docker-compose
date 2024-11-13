@@ -77,7 +77,7 @@ if ($timeframe === 'today') {
                 $game_started = new DateTime($lb->created_at);
                 $game_finished = new DateTime($lb->updated_at);
                 $interval = $game_started->diff($game_finished);
-                $minutes = $interval->i;
+                $minutes = $interval->i + ($interval->h * 60);
                 $seconds = $interval->s;
                 $updated_at = date('d/m/Y', strtotime($lb->updated_at));
                 ?>

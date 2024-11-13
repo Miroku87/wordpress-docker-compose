@@ -52,7 +52,7 @@ $seconds = $results->elapsed_time_seconds % 60;
 <?php endif ?>
 
 <p class="lb-summary">
-    Hai accumulato <span><?php echo $results->total_score; ?></span> punti totali su 1055:<br><br>
+    Hai accumulato <span><?php echo $results->total_score; ?></span> punti totali su 1015:<br><br>
     Hai trovato <span><?php echo $results->crystals_num; ?></span> cristalli su <span>14</span><br><br>
     Hai trovato <span><?php echo $results->hidden_crystals_num; ?></span> cristalli nascosti su <span>30</span><br><br>
     Hai sbagliato <span><?php echo $results->errors_num; ?></span> volte. <br><br>
